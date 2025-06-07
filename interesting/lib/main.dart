@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:interesting/my_widget/instructions.dart';
 import 'package:interesting/my_widget/question.dart';
-import 'package:interesting/my_widget/smallInstruction.dart';
-import 'my_widget/Bezier/Wave.dart';
+import 'package:interesting/my_widget/small_instruction.dart';
+import 'package:interesting/my_widget/sub_problem_data.dart';
+import 'my_widget/bezier/Wave.dart';
 import 'my_widget/answer.dart';
-import 'my_widget/expandableDraggableScrollableContainer.dart';
+import 'my_widget/expandable_draggable_scrollable_container.dart';
 import '../util.dart';
 
 void main() {
@@ -16,26 +17,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const List<String> answers = [
-      "The answer A",
-      "The answer would be B",
-      "C",
-      "D, la réponse D",
-    ];
-
-    const List<String> questions = ["f'(x)", "f''(x)", "f⁽ⁿ⁾(x)"];
-
-    const List<String> instructions = [
-      "Let’s assume any function with \nconstants parameter ai in R for all i in Z.",
-    ];
 
     return MaterialApp(
       title: 'Taylor series',
       theme: getTheme(context),
       home: MyHomePage(
-        answers: answers,
-        questions: questions,
-        instructions: instructions,
+        subProblemData: subProblem1,
       ),
     );
   }
@@ -44,16 +31,9 @@ class MyApp extends StatelessWidget {
 const sizeWave = 70.0;
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, this.questions, this.answers, this.instructions})
-    : assert(
-        (questions?.length ?? 0) <= (answers?.length ?? 0),
-        'Number of questions (${questions?.length ?? 0}) '
-        'cannot exceed number of answers (${answers?.length ?? 0}).',
-      );
+  const MyHomePage({super.key, required this.subProblemData});
 
-  final List<String>? questions;
-  final List<String>? answers;
-  final List<String>? instructions;
+  final SubProblemData subProblemData;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -68,11 +48,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   initState() {
+
+
     super.initState();
-    _slotIds = widget.questions == null
+    _slotIds = widget.subProblemData.questions == null
         ? []
-        : List<int?>.filled(widget.questions!.length, null);
-    _bank = (widget.answers?? [])
+        : List<int?>.filled(widget.subProblemData.questions!.length, null);
+    _bank = (widget.subProblemData.answers?? [])
         .asMap()
         .entries
         .map((e) => e.key)
@@ -119,7 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
               children: [
                 // === MIDDLE AREA ===
                 // Your custom ExpandableDraggableScrollableContainer
-                _buildScroll(colorScheme, widget.questions),
+                _buildScroll(colorScheme, widget.subProblemData.questions),
 
                 // === WAVE SHAPE ===
                 // This sits on top of the bottom‐edge of the middle area
@@ -185,9 +167,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Column _buildLeftColumn() {
     return Column(
-      children: widget.instructions != null
-          ? List.generate(widget.instructions!.length, (i) {
-              return Instructions(instructionText: widget.instructions![i]);
+      children: widget.subProblemData.instructions != null
+          ? List.generate(widget.subProblemData.instructions!.length, (i) {
+              return Instructions(instructionText: widget.subProblemData.instructions![i]);
             })
           : [],
     );
@@ -203,7 +185,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 questionText: questions[i],
                 child: _slotIds[i] != null
                     ? Answer(
-                        answerText: widget.answers![_slotIds[i]!],
+                        answerText: widget.subProblemData.answers![_slotIds[i]!],
                         id: _slotIds[i]!,
                       )
                     : null,
@@ -254,13 +236,13 @@ class _MyHomePageState extends State<MyHomePage> {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: HorizontalExpandableDraggableScrollableContainer(
         child: Row(
-          children: widget.answers == null
+          children: widget.subProblemData.answers == null
               ? []
               : _bank.map((answerData) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: Answer(
-                      answerText: widget.answers![answerData],
+                      answerText: widget.subProblemData.answers![answerData],
                       id: answerData,
                     ),
                   );

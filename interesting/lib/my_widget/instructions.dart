@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:interesting/my_widget/Bezier/cloud.dart';
+import 'package:interesting/my_widget/bezier/cloud.dart';
 import 'package:interesting/theme.dart';
 
 void main() => runApp(
