@@ -8,7 +8,7 @@ import 'my_widget/expandableDraggableScrollableContainer.dart';
 import '../util.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -16,10 +16,27 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const List<String> answers = [
+      "The answer A",
+      "The answer would be B",
+      "C",
+      "D, la réponse D",
+    ];
+
+    const List<String> questions = ["f'(x)", "f''(x)", "f⁽ⁿ⁾(x)"];
+
+    const List<String> instructions = [
+      "Let’s assume any function with \nconstants parameter ai in R for all i in Z.",
+    ];
+
     return MaterialApp(
       title: 'Taylor series',
       theme: getTheme(context),
-      home: const MyHomePage(),
+      home: MyHomePage(
+        answers: answers,
+        questions: questions,
+        instructions: instructions,
+      ),
     );
   }
 }
@@ -27,7 +44,17 @@ class MyApp extends StatelessWidget {
 const sizeWave = 70.0;
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+  const MyHomePage({super.key, this.questions, this.answers, this.instructions})
+    : assert(
+        (questions?.length ?? 0) <= (answers?.length ?? 0),
+        'Number of questions (${questions?.length ?? 0}) '
+        'cannot exceed number of answers (${answers?.length ?? 0}).',
+      );
+
+  final List<String>? questions;
+  final List<String>? answers;
+  final List<String>? instructions;
+
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
@@ -36,28 +63,22 @@ class _MyHomePageState extends State<MyHomePage> {
   // one slot per question in your right column:
   final String title = "Taylor series";
 
-  final List<String> answers = [
-    "Johny",
-    "God himself",
-    "Napoleon",
-    "D, la réponse D",
-  ];
-
-  final List<String> questions = [
-    "f'(x)",
-    "f''(x)",
-    "f⁽ⁿ⁾(x)",
-  ];
-
   List<int> _bank = [];
   List<int?> _slotIds = List<int?>.filled(0, null);
 
-
-  _MyHomePageState(){
-    _slotIds = List<int?>.filled(questions.length, null);
-    _bank = answers.asMap().entries
+  @override
+  initState() {
+    super.initState();
+    _slotIds = widget.questions == null
+        ? []
+        : List<int?>.filled(widget.questions!.length, null);
+    _bank = (widget.answers?? [])
+        .asMap()
+        .entries
         .map((e) => e.key)
-        .toList();// for i in range question.length: _bank.append(i)
+        .toList() ; // for i in range question.length: _bank.append(i)
+
+    _bank.shuffle();
   }
 
   bool get _allCorrect {
@@ -69,8 +90,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-
-
     final colorScheme = Theme.of(context).colorScheme;
 
     final textStyle = Theme.of(
@@ -100,7 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
               children: [
                 // === MIDDLE AREA ===
                 // Your custom ExpandableDraggableScrollableContainer
-                _buildScroll(colorScheme),
+                _buildScroll(colorScheme, widget.questions),
 
                 // === WAVE SHAPE ===
                 // This sits on top of the bottom‐edge of the middle area
@@ -132,9 +151,7 @@ class _MyHomePageState extends State<MyHomePage> {
       alignment: Alignment(0.9, 0.7),
 
       child: ElevatedButton(
-        onPressed: _allCorrect
-        ? () {}
-        : null, // () {} // null
+        onPressed: _allCorrect ? () {} : null, // () {} // null
         style: ElevatedButton.styleFrom(
           backgroundColor: bg,
           foregroundColor: fg, // text/icon color
@@ -146,66 +163,74 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget _buildScroll(ColorScheme colorScheme) {
-    final questions = ["f'(x)", "f''(x)", "f⁽ⁿ⁾(x)"];
-
+  Widget _buildScroll(ColorScheme colorScheme, List<String>? questions) {
     return ExpandableDraggableScrollableContainer(
       child: Container(
         color: colorScheme.surfaceContainerLowest,
         padding: const EdgeInsets.fromLTRB(10, 10, 10, 10 + sizeWave),
         child: Row(
+          spacing: 24,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Left column
-            Column(
-              children: [
-                Instructions(
-                  instructionText:
-                      "Let’s assume any function with \nconstants parameter ai in R for all i in Z.",
-                ),
-              ],
-            ),
-
-            const SizedBox(width: 24),
+            _buildLeftColumn(),
 
             // Right column
-            Column(
-              spacing: 24,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: List.generate(questions.length, (i) {
-                return Question(
-                  questionText: questions[i],
-                  child: _slotIds[i] != null
-                      ? Answer(answerText: answers[_slotIds[i]!], id: _slotIds[i]!,)
-                      : null,
-                  onAccept: (id) {
-
-                    setState(() {
-                      // 1) if it came from another slot, clear that slot:
-                      final origin = _slotIds.indexOf(id);
-
-                      if (origin != -1) {
-                        _slotIds[origin] = null;
-                      } else {
-                        // 2) otherwise it was in the bank:
-                        _bank.remove(id);
-                      }
-
-                      // 3) if this slot already had an answer, return it to bank:
-                      if (_slotIds[i] != null) {
-                        _bank.add(_slotIds[i]!);
-                      }
-
-                      // 4) finally assign the new text here:
-                      _slotIds[i] = id;
-                    });
-                  },
-                );
-              }),
-            ),
+            _buildRightColumn(questions),
           ],
         ),
       ),
+    );
+  }
+
+  Column _buildLeftColumn() {
+    return Column(
+      children: widget.instructions != null
+          ? List.generate(widget.instructions!.length, (i) {
+              return Instructions(instructionText: widget.instructions![i]);
+            })
+          : [],
+    );
+  }
+
+  Column _buildRightColumn(List<String>? questions) {
+    return Column(
+      spacing: 24,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: questions != null
+          ? List.generate(questions.length, (i) {
+              return Question(
+                questionText: questions[i],
+                child: _slotIds[i] != null
+                    ? Answer(
+                        answerText: widget.answers![_slotIds[i]!],
+                        id: _slotIds[i]!,
+                      )
+                    : null,
+                onAccept: (id) {
+                  setState(() {
+                    // 1) if it came from another slot, clear that slot:
+                    final origin = _slotIds.indexOf(id);
+
+                    if (origin != -1) {
+                      _slotIds[origin] = null;
+                    } else {
+                      // 2) otherwise it was in the bank:
+                      _bank.remove(id);
+                    }
+
+                    // 3) if this slot already had an answer, return it to bank:
+                    if (_slotIds[i] != null) {
+                      _bank.add(_slotIds[i]!);
+                    }
+
+                    // 4) finally assign the new text here:
+                    _slotIds[i] = id;
+                  });
+                },
+              );
+            })
+          : [],
     );
   }
 
@@ -219,20 +244,27 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildFooter(ColorScheme colorScheme) {
-
     return Container(
       height: 100,
-      color: Color.lerp(Colors.white, colorScheme.surfaceTint, 60.0 / 255)!,
+      color: Color.lerp(
+        colorScheme.surfaceContainerLowest,
+        colorScheme.surfaceTint,
+        60.0 / 255,
+      )!,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: HorizontalExpandableDraggableScrollableContainer(
         child: Row(
-          // If you need spacing, either wrap each Answer in Padding or use SizedBox(width: …)
-          children: _bank.map((answerData) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Answer(answerText: answers[answerData], id: answerData),
-            );
-          }).toList(),
+          children: widget.answers == null
+              ? []
+              : _bank.map((answerData) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Answer(
+                      answerText: widget.answers![answerData],
+                      id: answerData,
+                    ),
+                  );
+                }).toList(),
         ),
       ),
     );

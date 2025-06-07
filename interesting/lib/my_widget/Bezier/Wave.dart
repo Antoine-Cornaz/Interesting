@@ -9,7 +9,7 @@ class Wave extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final filledColor = Color.lerp(
-      Colors.white,
+      colorScheme.surfaceContainerLowest,
       colorScheme.surfaceTint,
       60.0 / 255,
     )!;
