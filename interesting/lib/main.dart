@@ -21,8 +21,27 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Taylor series',
       theme: getTheme(context),
-      home: MyHomePage(
+      home: SubProblem(
         subProblemData: subProblem1,
+      ),
+    );
+  }
+}
+
+class SecondRoute extends StatelessWidget {
+  const SecondRoute({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Second Route')),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text('Go back!'),
+        ),
       ),
     );
   }
@@ -30,16 +49,16 @@ class MyApp extends StatelessWidget {
 
 const sizeWave = 70.0;
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.subProblemData});
+class SubProblem extends StatefulWidget {
+  const SubProblem({super.key, required this.subProblemData});
 
   final SubProblemData subProblemData;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<SubProblem> createState() => _SubProblemState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _SubProblemState extends State<SubProblem> {
   // one slot per question in your right column:
   final String title = "Taylor series";
 
@@ -133,7 +152,12 @@ class _MyHomePageState extends State<MyHomePage> {
       alignment: Alignment(0.9, 0.7),
 
       child: ElevatedButton(
-        onPressed: _allCorrect ? () {} : null, // () {} // null
+        onPressed: _allCorrect ? () {
+          Navigator.push(
+            context,
+              MaterialPageRoute(builder: (context) => SubProblem(subProblemData: subProblem2)),
+          );
+        } : null, // () {} // null
         style: ElevatedButton.styleFrom(
           backgroundColor: bg,
           foregroundColor: fg, // text/icon color
@@ -252,3 +276,6 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
+
+
