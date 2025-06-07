@@ -9,7 +9,7 @@ var exampleQuestions = Column(
 
     Question(
       questionText: "f'(x) = and you know what a text slowly longer",
-      child: Answer(answerText: "A bit bigger answer", id: 0,),
+      child: Answer(answerText: "A bit bigger answer", id: 0),
     ),
   ],
 );
@@ -96,10 +96,19 @@ class Question extends StatelessWidget {
         },
         builder: (context, candidateData, rejectedData) {
           if (child != null) {
-            return child!;
+            return Container(
+              constraints: BoxConstraints(minWidth: 220),
+              child: child!,
+            );
           } else if (candidateData.isNotEmpty) {
             // show a preview while dragging over
-            return Answer(answerText: candidateData.first!.text, id: candidateData.first!.id);
+            return Container(
+              constraints: BoxConstraints(minWidth: 220),
+              child: Answer(
+                answerText: candidateData.first!.text,
+                id: candidateData.first!.id,
+              ),
+            );
           } else {
             // empty placeholder
             return const SizedBox(width: 220, height: 56);
@@ -138,7 +147,6 @@ class _ColorsAndStyles {
     required this.backgroundColor,
   });
 }
-
 
 class QuestionData {
   final int id;

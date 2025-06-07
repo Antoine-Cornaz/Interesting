@@ -30,7 +30,7 @@ class Answer extends StatelessWidget {
       color: scheme.primary,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        child: Text(answerText, style: textStyle),
+        child: Center(heightFactor: 1, child: Text(answerText, style: textStyle)),
       ),
     );
 
