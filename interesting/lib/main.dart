@@ -19,17 +19,31 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Taylor series',
       theme: getTheme(context),
-      home: const MyHomePage(title: 'Taylor series'),
+      home: const MyHomePage(),
     );
   }
 }
 
 const sizeWave = 70.0;
 
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key, required this.title});
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
 
-  final String title;
+class _MyHomePageState extends State<MyHomePage> {
+  // one slot per question in your right column:
+  final String title = "Taylor series";
+
+  final List<String> _bank = [
+    "Answer to question A",
+    "Answer B",
+    "C",
+    "D, la réponse D",
+  ];
+
+  final List<String?> _answers = List<String?>.filled(3, null);
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +57,7 @@ class MyHomePage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: colorScheme.surface,
         foregroundColor: colorScheme.onSurface,
-        title: Text(title, style: textStyle,),
+        title: Text(title, style: textStyle),
       ),
 
       body: _buildBody(context),
@@ -101,20 +115,19 @@ class MyHomePage extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 24),
         ),
 
-        child: Text("Next",
-          style: buttonTextStyle,
-        ),
+        child: Text("Next", style: buttonTextStyle),
       ),
     );
   }
 
-  ExpandableDraggableScrollableContainer _buildScroll(ColorScheme colorScheme) {
+  Widget _buildScroll(ColorScheme colorScheme) {
+    final questions = ["f'(x)", "f''(x)", "f⁽ⁿ⁾(x)"];
+
     return ExpandableDraggableScrollableContainer(
       child: Container(
         color: colorScheme.surfaceContainerLowest,
         padding: const EdgeInsets.fromLTRB(10, 10, 10, 10 + sizeWave),
         child: Row(
-
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Left column
@@ -133,20 +146,34 @@ class MyHomePage extends StatelessWidget {
             Column(
               spacing: 24,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SmallInstruction(
-                  instructionText: "Let f(x) = a0 + a1x + a2x² + ...",
-                ),
+              children: List.generate(questions.length, (i) {
+                return Question(
+                  questionText: questions[i],
+                  child: _answers[i] != null
+                      ? Answer(answerText: _answers[i]!)
+                      : null,
+                  onAccept: (text) {
+                    setState(() {
+                      // 1) if it came from another slot, clear that slot:
+                      final origin = _answers.indexOf(text);
+                      if (origin != -1) {
+                        _answers[origin] = null;
+                      } else {
+                        // 2) otherwise it was in the bank:
+                        _bank.remove(text);
+                      }
 
-                Question(
-                  questionText: "f'(x)",
-                  child: Answer(answerText: "a1 + 2a2x + 3a3x² + ..."),
-                ),
+                      // 3) if this slot already had an answer, return it to bank:
+                      if (_answers[i] != null) {
+                        _bank.add(_answers[i]!);
+                      }
 
-                Question(questionText: "f''(x)"),
-
-                Question(questionText: 'f⁽ⁿ⁾(x)'),
-              ],
+                      // 4) finally assign the new text here:
+                      _answers[i] = text;
+                    });
+                  },
+                );
+              }),
             ),
           ],
         ),
@@ -159,10 +186,7 @@ class MyHomePage extends StatelessWidget {
       left: 0,
       right: 0,
       bottom: 0,
-      child: SizedBox(
-        height: sizeWave,
-        child: Wave(),
-      ),
+      child: SizedBox(height: sizeWave, child: Wave()),
     );
   }
 
@@ -174,25 +198,12 @@ class MyHomePage extends StatelessWidget {
       child: HorizontalExpandableDraggableScrollableContainer(
         child: Row(
           // If you need spacing, either wrap each Answer in Padding or use SizedBox(width: …)
-          children: const [
-            SizedBox(width: 16),
-            Answer(answerText: "Johny"),
-            SizedBox(width: 16),
-            Answer(answerText: "God himself"),
-            SizedBox(width: 16),
-            Answer(answerText: "Napoleon"),
-            SizedBox(width: 16),
-            Answer(answerText: "D, la réponse D"),
-            SizedBox(width: 16),
-            Answer(answerText: "D, la réponse D"),
-            SizedBox(width: 16),
-            Answer(answerText: "D, la réponse D"),
-            SizedBox(width: 16),
-            Answer(answerText: "D, la réponse D"),
-            SizedBox(width: 16),
-            Answer(answerText: "D, la réponse D"),
-            SizedBox(width: 16),
-          ],
+          children: _bank.map((text) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Answer(answerText: text),
+            );
+          }).toList(),
         ),
       ),
     );

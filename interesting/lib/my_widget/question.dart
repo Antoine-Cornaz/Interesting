@@ -9,7 +9,7 @@ var exampleQuestions = Column(
 
     Question(
       questionText: "f'(x) = and you know what a text slowly longer",
-      child: Answer(answerText: "A bit bigger answer"),
+      child: Answer(answerText: "A bit bigger answer", ),
     ),
   ],
 );
@@ -26,12 +26,14 @@ class Question extends StatelessWidget {
     super.key,
     required this.questionText,
     this.child,
+    this.onAccept,
     this.horizontalPadding = 8.0,
     this.verticalPadding = 4.0,
   });
 
   final String questionText;
   final Widget? child;
+  final void Function(String)? onAccept;
   final double horizontalPadding;
   final double verticalPadding;
 
@@ -87,7 +89,23 @@ class Question extends StatelessWidget {
         horizontal: horizontalPadding,
         vertical: verticalPadding,
       ).copyWith(left: 0),
-      child: child ?? const SizedBox(width: 220, height: 56),
+      child: DragTarget<String>(
+        onWillAcceptWithDetails: (_) => true,
+        onAcceptWithDetails: (answerText) {
+          if (onAccept != null) onAccept!(answerText.data);
+        },
+        builder: (context, candidateData, rejectedData) {
+          if (child != null) {
+            return child!;
+          } else if (candidateData.isNotEmpty) {
+            // show a preview while dragging over
+            return Answer(answerText: candidateData.first!,);
+          } else {
+            // empty placeholder
+            return const SizedBox(width: 220, height: 56);
+          }
+        },
+      ),
     );
   }
 
