@@ -21,6 +21,17 @@ const List<String> instructions2 = [
 
 var subProblem2 = SubProblemData(questions: questions2, answers: answers2, instructions: instructions2);
 
+const List<String> questions3 = ["5+3=", "12-5", "8-?=2", "?-14=16"];
+
+const List<String> answers3 = [
+  "8", "7", "6", "30", "-2", "2", "-4",
+];
+
+const List<String> instructions3 = [];
+
+var subProblem3 = SubProblemData(questions: questions3, answers: answers3, instructions: instructions3);
+
+var problem1 = [subProblem1, subProblem2, subProblem3];
 
 class SubProblemData{
   final List<String>? answers;
