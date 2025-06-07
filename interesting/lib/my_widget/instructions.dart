@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:interesting/my_widget/Bezier/cloud.dart';
 import 'package:interesting/theme.dart';
-
 
 void main() => runApp(
   MaterialApp(
@@ -21,22 +21,17 @@ class Instructions extends StatelessWidget {
   Widget build(BuildContext context) {
     var scheme = Theme.of(context).colorScheme;
     var colorText = scheme.onSecondaryContainer;
-    var colorBg = scheme.secondaryContainer;
-    var colorOutline = scheme.onSurfaceVariant;
 
     final textStyle = Theme.of(
       context,
     ).textTheme.headlineSmall?.copyWith(color: colorText);
 
-    return Center(
+    return Cloud(
       child: Container(
-        constraints: BoxConstraints(),
-        key: key,
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10.0),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: colorBg,
-          border: Border.all(color: colorOutline, width: 3)),
+        alignment: Alignment(0, 0),
+        width: 600/1.5,
+        height: 356/1.5,
+        padding: EdgeInsets.all(20),
         child: Text(instructionText, style: textStyle),
       ),
     );

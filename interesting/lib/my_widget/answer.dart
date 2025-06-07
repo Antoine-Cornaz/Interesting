@@ -30,18 +30,13 @@ class Answer extends StatelessWidget {
       child: Card(
         key: key,
         color: colorBg,
-        child: IntrinsicHeight(
-          child: IntrinsicWidth(
-            child: Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  // Now questionText can never be null here:
-                  child: Text(answerText, style: textStyle),
-                ),
-              ],
+        child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: Text(answerText, style: textStyle),
             ),
-          ),
+          ],
         ),
       ),
     );

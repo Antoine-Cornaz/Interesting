@@ -21,7 +21,7 @@ TextTheme createTextTheme(
 }
 
 ThemeData getTheme(context){
-  TextTheme textTheme = createTextTheme(context, "Roboto", "Roboto");
+  TextTheme textTheme = createTextTheme(context, "Roboto", "Roboto"); // Roboto or to test "Flow Circular"
   return MyMaterialTheme(textTheme).light();
 }
 

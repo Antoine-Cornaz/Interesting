@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:interesting/my_widget/instructions.dart';
 import 'package:interesting/my_widget/question.dart';
 import 'package:interesting/my_widget/smallInstruction.dart';
-import 'my_widget/Wave.dart';
+import 'my_widget/Bezier/Wave.dart';
 import 'my_widget/answer.dart';
 import 'my_widget/expandableDraggableScrollableContainer.dart';
-import 'util.dart';
+import '../util.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,7 +14,6 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -25,6 +24,8 @@ class MyApp extends StatelessWidget {
   }
 }
 
+const sizeWave = 70.0;
+
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key, required this.title});
 
@@ -32,100 +33,165 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    var colorScheme = Theme.of(context).colorScheme;
-    //return _buildThings();
+    final colorScheme = Theme.of(context).colorScheme;
+
+    final textStyle = Theme.of(
+      context,
+    ).textTheme.headlineSmall?.copyWith(fontSize: 32);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: colorScheme.surface,
         foregroundColor: colorScheme.onSurface,
-        title: Text("Taylor series"),
+        title: Text(title, style: textStyle,),
       ),
 
-      body: _buildBody(colorScheme),
+      body: _buildBody(context),
     );
   }
 
-  Widget _buildBody(ColorScheme colorScheme) {
-    return Container(color: colorScheme.surfaceContainerLowest, child: Column(
-      children: [_buildCenter(colorScheme), Container(height: 70, width: double.infinity, child: Wave(),), _builderFooter(colorScheme)],
-    ));
-  }
-
-  Widget _buildCenter(ColorScheme colorScheme) {
-    return Expanded(
-      child: ExpandableDraggableScrollableContainer(
-        key: key,
-        child: Container(
-          padding: EdgeInsets.all(10),
-          color: colorScheme.surfaceContainerLowest,
-          child: Row(
-            spacing: 24,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              //Left column
-              leftColumn(),
-
-              // Right column
-              rightColumn(),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Column leftColumn() {
-    return Column(
-      spacing: 24,
-      children: [
-        SmallInstruction(instructionText: "Let f(x) = a0 + a1x + a2x² + ..."),
-        Question(
-          questionText: "f'(x)",
-          child: Answer(answerText: "a1 + 2a2x + 3a3x² + ..."),
-        ),
-        Question(questionText: "f''(x)"),
-        Question(questionText: 'f(n) (x)'),
-      ],
-    );
-  }
-
-  Column rightColumn() {
-    return Column(
-      children: [
-        Instructions(
-          instructionText:
-              "Let’s assume any function with \n constants parameter ai in R for all i in Z.",
-        ),
-      ],
-    );
-  }
-
-  Widget _builderFooter(ColorScheme colorScheme) {
+  Container _buildBody(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
-      color: colorScheme.surfaceTint.withAlpha(60),
-      height: 100,
+      color: colorScheme.surfaceContainerLowest,
+      child: Column(
+        children: [
+          // Expand to fill all space between AppBar and footer
+          Expanded(
+            child: Stack(
+              children: [
+                // === MIDDLE AREA ===
+                // Your custom ExpandableDraggableScrollableContainer
+                _buildScroll(colorScheme),
 
-      padding: EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+                // === WAVE SHAPE ===
+                // This sits on top of the bottom‐edge of the middle area
+                _buildWave(),
+
+                _buildButtonNext(context),
+              ],
+            ),
+          ),
+
+          // === FOOTER ===
+          // Fixed height 100
+          _buildFooter(colorScheme),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildButtonNext(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final Color bg = colorScheme.secondary;
+    final Color fg = colorScheme.onSecondary;
+
+    final buttonTextStyle = Theme.of(
+      context,
+    ).textTheme.headlineSmall?.copyWith(color: fg);
+
+    return Container(
+      alignment: Alignment(0.9, 0.7),
+
+      child: ElevatedButton(
+        onPressed: null, // () {} // null
+        style: ElevatedButton.styleFrom(
+          backgroundColor: bg,
+          foregroundColor: fg, // text/icon color
+          padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 24),
+        ),
+
+        child: Text("Next",
+          style: buttonTextStyle,
+        ),
+      ),
+    );
+  }
+
+  ExpandableDraggableScrollableContainer _buildScroll(ColorScheme colorScheme) {
+    return ExpandableDraggableScrollableContainer(
+      child: Container(
+        color: colorScheme.surfaceContainerLowest,
+        padding: const EdgeInsets.fromLTRB(10, 10, 10, 10 + sizeWave),
+        child: Row(
+
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Left column
+            Column(
+              children: [
+                Instructions(
+                  instructionText:
+                      "Let’s assume any function with \nconstants parameter ai in R for all i in Z.",
+                ),
+              ],
+            ),
+
+            const SizedBox(width: 24),
+
+            // Right column
+            Column(
+              spacing: 24,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SmallInstruction(
+                  instructionText: "Let f(x) = a0 + a1x + a2x² + ...",
+                ),
+
+                Question(
+                  questionText: "f'(x)",
+                  child: Answer(answerText: "a1 + 2a2x + 3a3x² + ..."),
+                ),
+
+                Question(questionText: "f''(x)"),
+
+                Question(questionText: 'f⁽ⁿ⁾(x)'),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Positioned _buildWave() {
+    return Positioned(
+      left: 0,
+      right: 0,
+      bottom: 0,
+      child: SizedBox(
+        height: sizeWave,
+        child: Wave(),
+      ),
+    );
+  }
+
+  Widget _buildFooter(ColorScheme colorScheme) {
+    return Container(
+      height: 100,
+      color: Color.lerp(Colors.white, colorScheme.surfaceTint, 60.0 / 255)!,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: HorizontalExpandableDraggableScrollableContainer(
         child: Row(
-          spacing: 16,
-          children: [
-            // Wrap the Row in a SingleChildScrollView to enable horizontal scrolling
+          // If you need spacing, either wrap each Answer in Padding or use SizedBox(width: …)
+          children: const [
+            SizedBox(width: 16),
             Answer(answerText: "Johny"),
+            SizedBox(width: 16),
             Answer(answerText: "God himself"),
+            SizedBox(width: 16),
             Answer(answerText: "Napoleon"),
+            SizedBox(width: 16),
             Answer(answerText: "D, la réponse D"),
+            SizedBox(width: 16),
             Answer(answerText: "D, la réponse D"),
+            SizedBox(width: 16),
             Answer(answerText: "D, la réponse D"),
+            SizedBox(width: 16),
             Answer(answerText: "D, la réponse D"),
+            SizedBox(width: 16),
             Answer(answerText: "D, la réponse D"),
-            Answer(answerText: "D, la réponse D"),
+            SizedBox(width: 16),
           ],
         ),
       ),
