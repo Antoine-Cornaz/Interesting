@@ -36,17 +36,41 @@ class _MyHomePageState extends State<MyHomePage> {
   // one slot per question in your right column:
   final String title = "Taylor series";
 
-  final List<String> _bank = [
-    "Answer to question A",
-    "Answer B",
-    "C",
+  final List<String> answers = [
+    "Johny",
+    "God himself",
+    "Napoleon",
     "D, la réponse D",
   ];
 
-  final List<String?> _answers = List<String?>.filled(3, null);
+  final List<String> questions = [
+    "f'(x)",
+    "f''(x)",
+    "f⁽ⁿ⁾(x)",
+  ];
+
+  List<int> _bank = [];
+  List<int?> _slotIds = List<int?>.filled(0, null);
+
+
+  _MyHomePageState(){
+    _slotIds = List<int?>.filled(questions.length, null);
+    _bank = answers.asMap().entries
+        .map((e) => e.key)
+        .toList();// for i in range question.length: _bank.append(i)
+  }
+
+  bool get _allCorrect {
+    for (var i = 0; i < _slotIds.length; i++) {
+      if (i != _slotIds[i]) return false;
+    }
+    return true;
+  }
 
   @override
   Widget build(BuildContext context) {
+
+
     final colorScheme = Theme.of(context).colorScheme;
 
     final textStyle = Theme.of(
@@ -108,7 +132,9 @@ class _MyHomePageState extends State<MyHomePage> {
       alignment: Alignment(0.9, 0.7),
 
       child: ElevatedButton(
-        onPressed: null, // () {} // null
+        onPressed: _allCorrect
+        ? () {}
+        : null, // () {} // null
         style: ElevatedButton.styleFrom(
           backgroundColor: bg,
           foregroundColor: fg, // text/icon color
@@ -149,27 +175,29 @@ class _MyHomePageState extends State<MyHomePage> {
               children: List.generate(questions.length, (i) {
                 return Question(
                   questionText: questions[i],
-                  child: _answers[i] != null
-                      ? Answer(answerText: _answers[i]!)
+                  child: _slotIds[i] != null
+                      ? Answer(answerText: answers[_slotIds[i]!], id: _slotIds[i]!,)
                       : null,
-                  onAccept: (text) {
+                  onAccept: (id) {
+
                     setState(() {
                       // 1) if it came from another slot, clear that slot:
-                      final origin = _answers.indexOf(text);
+                      final origin = _slotIds.indexOf(id);
+
                       if (origin != -1) {
-                        _answers[origin] = null;
+                        _slotIds[origin] = null;
                       } else {
                         // 2) otherwise it was in the bank:
-                        _bank.remove(text);
+                        _bank.remove(id);
                       }
 
                       // 3) if this slot already had an answer, return it to bank:
-                      if (_answers[i] != null) {
-                        _bank.add(_answers[i]!);
+                      if (_slotIds[i] != null) {
+                        _bank.add(_slotIds[i]!);
                       }
 
                       // 4) finally assign the new text here:
-                      _answers[i] = text;
+                      _slotIds[i] = id;
                     });
                   },
                 );
@@ -191,6 +219,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildFooter(ColorScheme colorScheme) {
+
     return Container(
       height: 100,
       color: Color.lerp(Colors.white, colorScheme.surfaceTint, 60.0 / 255)!,
@@ -198,10 +227,10 @@ class _MyHomePageState extends State<MyHomePage> {
       child: HorizontalExpandableDraggableScrollableContainer(
         child: Row(
           // If you need spacing, either wrap each Answer in Padding or use SizedBox(width: …)
-          children: _bank.map((text) {
+          children: _bank.map((answerData) {
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Answer(answerText: text),
+              child: Answer(answerText: answers[answerData], id: answerData),
             );
           }).toList(),
         ),
