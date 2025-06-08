@@ -387,3 +387,12 @@ class ColorFamily {
   final Color colorContainer;
   final Color onColorContainer;
 }
+
+
+Color buildSurfaceVariant(ColorScheme colorScheme) {
+  return Color.lerp(
+    colorScheme.surfaceContainer,
+    colorScheme.primaryContainer,
+    0.1,
+  )!;
+}

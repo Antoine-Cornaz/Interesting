@@ -16,7 +16,7 @@ class CurvePainter extends CustomPainter {
     paint.color = color2;
     paint.style = PaintingStyle.fill;
     if (stroke) {
-      paint.strokeWidth = 10.0;
+      paint.strokeWidth = 7.0;
       paint.style = PaintingStyle.stroke;
     }
 

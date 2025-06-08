@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../theme.dart';
 import 'curvePainter.dart';
 import 'myBezier.dart';
 
@@ -8,11 +9,7 @@ class Wave extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final filledColor = Color.lerp(
-      colorScheme.surfaceContainerLowest,
-      colorScheme.surfaceTint,
-      60.0 / 255,
-    )!;
+    final filledColor = buildSurfaceVariant(colorScheme);
     final borderColor = colorScheme.onPrimaryContainer;
 
     BezierShape bc = BezierShape();
