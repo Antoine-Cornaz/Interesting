@@ -23,8 +23,38 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class SwipeScreen extends StatelessWidget {
+class SwipeScreen extends StatefulWidget {
   const SwipeScreen({super.key});
+
+  @override
+  _SwipeScreenState createState() => _SwipeScreenState();
+}
+
+class _SwipeScreenState extends State<SwipeScreen> {
+  Offset _dragOffset = Offset.zero;
+
+  void _onPanUpdate(DragUpdateDetails details) {
+    setState(() {
+      _dragOffset += details.delta;
+    });
+  }
+
+  void _onPanEnd(DragEndDetails details) {
+    // decide swipe direction based on velocity or final offset:
+    final dx = _dragOffset.dx;
+    final dy = _dragOffset.dy;
+    if (dx > 100) {
+      // swiped right → “Easy”
+    } else if (dx < -100) {
+      // swiped left → “Too Hard”
+    } else if (dy < -100) {
+      // swiped up → “Not Sure”
+    }
+    // then reset for next card:
+    setState(() {
+      _dragOffset = Offset.zero;
+    });
+  }
 
   static const maxWidthCard = 600.0;
 
@@ -32,26 +62,28 @@ class SwipeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     var colorScheme = Theme.of(context).colorScheme;
-    final ellipseColor = buildSurfaceVariant(colorScheme);
+    final ellipseColor = colorScheme.surface;
+    final ellipseColorInside = colorScheme.secondary;
     return Scaffold(
-      backgroundColor: colorScheme.surface,
-      body: buildMainBody(size, ellipseColor, colorScheme, context),
+      backgroundColor: colorScheme.primary,
+      body: buildMainBody(size, ellipseColorInside, ellipseColor, colorScheme, context),
     );
   }
 
-  Stack buildMainBody(
+  Widget buildMainBody(
     Size size,
-    Color ellipseColor,
+    Color ellipseColorInside,
+    Color ellipseColorOutside,
     ColorScheme colorScheme,
     BuildContext context,
   ) {
     return Stack(
       children: [
         // 1) giant ellipse
-        buildGiantEllipse(size, ellipseColor),
+        buildGiantEllipses(size, ellipseColorOutside),
 
-        // 2) line
-        buildBottomLine(colorScheme),
+        // 2) giant ellipse
+        buildGiantEllipses(size, ellipseColorInside, scaleFactor: 0.83),
 
         // 3) main content
         buildMainContent(context, colorScheme),
@@ -59,13 +91,14 @@ class SwipeScreen extends StatelessWidget {
     );
   }
 
-  Widget buildGiantEllipse(Size size, Color ellipseColor) {
+  Widget buildGiantEllipses(Size size, Color ellipseColor, {double scaleFactor=1.0}) {
     return Positioned(
       top: -size.height * .8,
-      left: size.width / 2 - maxWidthCard,
+      left: -200,
+      right: -240,
       child: Container(
-        width: min(size.width, maxWidthCard) * 1.8,
-        height: size.height * 1.5,
+        width: min(size.width, maxWidthCard) * 2.2 * scaleFactor,
+        height: size.height * 1.80 * scaleFactor,
         decoration: BoxDecoration(
           color: ellipseColor,
           borderRadius: BorderRadius.circular(size.height),
@@ -91,9 +124,8 @@ class SwipeScreen extends StatelessWidget {
           children: [
             // a) header text
             Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 24,
-                vertical: 16,
+              padding: const EdgeInsets.fromLTRB(
+                24, 32, 24, 0
               ),
               child: buildInstructions(context, colorScheme),
             ),
@@ -104,8 +136,6 @@ class SwipeScreen extends StatelessWidget {
             // c) buttons row
             buildButtons(colorScheme),
 
-            // d) wave at very bottom
-            SizedBox(height: 40, width: double.infinity, child: Wave()),
           ],
         ),
       ),
@@ -118,33 +148,47 @@ class SwipeScreen extends StatelessWidget {
       TextSpan(
         children: [
           TextSpan(
-            text: 'Find Your Math Level\n',
+            text: "Let's Find Your Math Level\n",
             style: Theme.of(
               context,
-            ).textTheme.bodyLarge?.copyWith(color: colorScheme.onSurface),
-          ),
-          TextSpan(
-            text: 'Swipe to show how comfortable you are with each problem.',
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: colorScheme.onSurface,
-              fontWeight: FontWeight.bold,
+            ).textTheme.bodyLarge?.copyWith(
+                color: colorScheme.onSecondary,
+                fontWeight: FontWeight.bold
             ),
           ),
+          /*TextSpan(
+            text: "Swipe to show how comfortable you are with each problem.",
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              color: colorScheme.onSecondary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),*/
         ],
       ),
     );
   }
 
   Widget buildLatexCard() {
+    final latexString = r'''
+You’ll see a series of math problems. 
+No need to solve them. 
+Just answer: Can you solve this one? 
+
+Swipe  Right for Yes, Left for No, Up for Maybe. 
+Ready? Swipe Right to start. 
+
+Prefer tapping? Use the buttons below.
+''';
+
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(40, 12, 40, 0),
         child: Center(
-          child: LatexCard(
+          child: TextCard(
             expressions: [
-              r'\displaystyle x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}',
-              r'\displaystyle y = mx + b',
-              r'\displaystyle e^{i\pi} + 1 = 0',
+              latexString
+              //r'\displaystyle y = mx + b',
+              //r'\displaystyle e^{i\pi} + 1 = 0',
             ],
           ),
         ),
@@ -157,7 +201,7 @@ class SwipeScreen extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 120, vertical: 12),
+          padding: const EdgeInsets.fromLTRB(120, 12, 120, 40),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             spacing: 10,
@@ -166,24 +210,24 @@ class SwipeScreen extends StatelessWidget {
               buildElevatedButton(
                 colorScheme.tertiary,
                 colorScheme.onTertiary,
-                'Too hard',
-                Icons.close,
+                'No',
+                Icons.arrow_back_rounded,
               ),
 
               // Not sure button
               buildElevatedButton(
                 colorScheme.secondary,
                 colorScheme.onSecondary,
-                'Not sure',
-                Icons.remove,
+                'Maybe',
+                Icons.arrow_upward,
               ),
 
               // Easy button
               buildElevatedButton(
                 colorScheme.primary,
                 colorScheme.onPrimary,
-                'Easy',
-                Icons.check,
+                'Yes',
+                Icons.arrow_forward_sharp,
               ),
             ],
           ),
@@ -201,10 +245,17 @@ class SwipeScreen extends StatelessWidget {
     String data,
     IconData icon,
   ) {
+
+    final textStyle = Theme.of(context)
+        .textTheme
+        .bodySmall
+        ?.copyWith(color: foregroundColor);
+
     return Expanded(
       child: ElevatedButton.icon(
         icon: Icon(icon),
-        label: Text(data),
+        label: Text(data,
+        style: textStyle,),
         onPressed: () {},
         style: ElevatedButton.styleFrom(
           elevation: 2,
@@ -237,5 +288,4 @@ class SwipeScreen extends StatelessWidget {
       ),
     );
   }
-
 }
