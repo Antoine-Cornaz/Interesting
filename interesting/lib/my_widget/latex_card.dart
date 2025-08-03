@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Taylor series',
       theme: getTheme(context),
-      home:TextCard(
+      home:LatexCard(
         expressions: [
           r'\displaystyle x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}',
           r'\displaystyle y = mx + b',
@@ -39,8 +39,8 @@ class LatexCard extends StatelessWidget {
   const LatexCard({
     super.key,
     required this.expressions,
-    this.textStyle = const TextStyle(fontSize: 24),
-    this.mathStyle = MathStyle.text,
+    this.textStyle = const TextStyle(fontSize: 32),
+    this.mathStyle = MathStyle.display,
   });
 
   @override
@@ -49,14 +49,24 @@ class LatexCard extends StatelessWidget {
     final children = <Widget>[];
     for (var i = 0; i < expressions.length; i++) {
       // Each expression takes equal space
+
+      final longEq = Math.tex(
+        expressions[i],
+        textStyle: textStyle,
+        mathStyle: mathStyle,
+      );
+      final breakResult = longEq.texBreak();
+      final widget = Wrap(
+        children: breakResult.parts,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        //alignment: WrapAlignment.center,
+        //runAlignment: WrapAlignment.center,
+      );
+
       children.add(
         Expanded(
           child: Center(
-            child: Math.tex(
-              expressions[i],
-              textStyle: textStyle,
-              mathStyle: mathStyle,
-            ),
+            child: longEq,
           ),
         ),
       );

@@ -1,10 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import '../../theme.dart';
 import '../../util.dart';
-import '../bezier/Wave.dart';
-import '../latex_card.dart';
+import '../backend/screen/card_manager.dart';
+import '../my_widget/latex_card.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +15,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Taylor series',
+      title: 'Swipe Screen',
       theme: getTheme(context),
       home: SwipeScreen(),
     );
@@ -31,6 +30,7 @@ class SwipeScreen extends StatefulWidget {
 }
 
 class _SwipeScreenState extends State<SwipeScreen> {
+  final CardManager cardManager = CardManager();
   Offset _dragOffset = Offset.zero;
 
   void _onPanUpdate(DragUpdateDetails details) {
@@ -40,20 +40,27 @@ class _SwipeScreenState extends State<SwipeScreen> {
   }
 
   void _onPanEnd(DragEndDetails details) {
-    // decide swipe direction based on velocity or final offset:
     final dx = _dragOffset.dx;
     final dy = _dragOffset.dy;
+    bool swiped = false;
+
     if (dx > 100) {
-      // swiped right → “Easy”
+      cardManager.accept();
+      swiped = true;
     } else if (dx < -100) {
-      // swiped left → “Too Hard”
-    } else if (dy < -100) {
-      // swiped up → “Not Sure”
+      cardManager.refuse();
+      swiped = true;
+    } else if(dy < -100) {
+      cardManager.dontKnow();
     }
-    // then reset for next card:
-    setState(() {
-      _dragOffset = Offset.zero;
-    });
+
+    if (!swiped) {
+      setState(() => _dragOffset = Offset.zero);
+    } else {
+      Future.delayed(Duration(milliseconds: 100), () {
+        setState(() => _dragOffset = Offset.zero);
+      });
+    }
   }
 
   static const maxWidthCard = 600.0;
@@ -156,40 +163,30 @@ class _SwipeScreenState extends State<SwipeScreen> {
                 fontWeight: FontWeight.bold
             ),
           ),
-          /*TextSpan(
-            text: "Swipe to show how comfortable you are with each problem.",
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: colorScheme.onSecondary,
-              fontWeight: FontWeight.bold,
-            ),
-          ),*/
         ],
       ),
     );
   }
 
   Widget buildLatexCard() {
-    final latexString = r'''
-You’ll see a series of math problems. 
-No need to solve them. 
-Just answer: Can you solve this one? 
+    if (cardManager.isLast && cardManager.currentIndex >= cardManager.lengthCard) return SizedBox();
 
-Swipe  Right for Yes, Left for No, Up for Maybe. 
-Ready? Swipe Right to start. 
-
-Prefer tapping? Use the buttons below.
-''';
+    final content = cardManager.currentCard;
 
     return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(40, 12, 40, 0),
-        child: Center(
-          child: TextCard(
-            expressions: [
-              latexString
-              //r'\displaystyle y = mx + b',
-              //r'\displaystyle e^{i\pi} + 1 = 0',
-            ],
+      child: GestureDetector(
+        onPanUpdate: _onPanUpdate,
+        onPanEnd: _onPanEnd,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(40, 12, 40, 0),
+          child: Transform.translate(
+            offset: _dragOffset,
+            child: Transform.rotate(
+              angle: _dragOffset.dx * 0.001,
+              child: cardManager.isFirst
+                  ? TextCard(expressions: [content])
+                  : LatexCard(expressions: [content]),
+            ),
           ),
         ),
       ),
@@ -201,13 +198,18 @@ Prefer tapping? Use the buttons below.
       clipBehavior: Clip.none,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(120, 12, 120, 40),
+          padding: const EdgeInsets.fromLTRB(120, 12, 120, 120),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             spacing: 10,
             children: [
               // Too Hard button
               buildElevatedButton(
+                    () {
+                  setState(() {
+                    cardManager.refuse();
+                  });
+                },
                 colorScheme.tertiary,
                 colorScheme.onTertiary,
                 'No',
@@ -216,6 +218,11 @@ Prefer tapping? Use the buttons below.
 
               // Not sure button
               buildElevatedButton(
+                    () {
+                  setState(() {
+                    cardManager.dontKnow();
+                  });
+                },
                 colorScheme.secondary,
                 colorScheme.onSecondary,
                 'Maybe',
@@ -224,6 +231,11 @@ Prefer tapping? Use the buttons below.
 
               // Easy button
               buildElevatedButton(
+                    () {
+                  setState(() {
+                    cardManager.accept();
+                  });
+                },
                 colorScheme.primary,
                 colorScheme.onPrimary,
                 'Yes',
@@ -240,6 +252,7 @@ Prefer tapping? Use the buttons below.
   }
 
   Widget buildElevatedButton(
+    void Function()? onPressed,
     Color backgroundColor,
     Color foregroundColor,
     String data,
@@ -256,7 +269,7 @@ Prefer tapping? Use the buttons below.
         icon: Icon(icon),
         label: Text(data,
         style: textStyle,),
-        onPressed: () {},
+        onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           elevation: 2,
           backgroundColor: backgroundColor,
@@ -283,7 +296,10 @@ Prefer tapping? Use the buttons below.
           backgroundColor: colorScheme.surfaceContainerLow,
           foregroundColor: colorScheme.onSurfaceVariant, // optional fill
         ),
-        onPressed: () {},
+        onPressed: () {
+          setState(() {
+            cardManager.previousCard();
+          });},
         child: Icon(Icons.undo),
       ),
     );
