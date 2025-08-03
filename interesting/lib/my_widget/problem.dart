@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:interesting/my_widget/instructions.dart';
 import 'package:interesting/my_widget/question.dart';
 import 'package:interesting/my_widget/sub_problem_data.dart';
+import '../theme.dart';
 import 'bezier/Wave.dart';
 import 'answer.dart';
 import 'expandable_draggable_scrollable_container.dart';
@@ -227,11 +228,7 @@ class _ProblemState extends State<Problem> {
   Widget _buildFooter(ColorScheme colorScheme) {
     return Container(
       height: 100,
-      color: Color.lerp(
-        colorScheme.surfaceContainerLowest,
-        colorScheme.surfaceTint,
-        60.0 / 255,
-      )!,
+      color: buildSurfaceVariant(colorScheme),
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: HorizontalExpandableDraggableScrollableContainer(
         child: Row(
