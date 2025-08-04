@@ -45,13 +45,13 @@ class _SwipeScreenState extends State<SwipeScreen> {
     bool swiped = false;
 
     if (dx > 100) {
-      cardManager.accept();
+      cardManager.answerYes();
       swiped = true;
     } else if (dx < -100) {
-      cardManager.refuse();
+      cardManager.answerNo();
       swiped = true;
-    } else if(dy < -100) {
-      cardManager.dontKnow();
+    } else if (dy < -100) {
+      cardManager.answerMaybe();
     }
 
     if (!swiped) {
@@ -73,7 +73,13 @@ class _SwipeScreenState extends State<SwipeScreen> {
     final ellipseColorInside = colorScheme.secondary;
     return Scaffold(
       backgroundColor: colorScheme.primary,
-      body: buildMainBody(size, ellipseColorInside, ellipseColor, colorScheme, context),
+      body: buildMainBody(
+        size,
+        ellipseColorInside,
+        ellipseColor,
+        colorScheme,
+        context,
+      ),
     );
   }
 
@@ -98,7 +104,11 @@ class _SwipeScreenState extends State<SwipeScreen> {
     );
   }
 
-  Widget buildGiantEllipses(Size size, Color ellipseColor, {double scaleFactor=1.0}) {
+  Widget buildGiantEllipses(
+    Size size,
+    Color ellipseColor, {
+    double scaleFactor = 1.0,
+  }) {
     return Positioned(
       top: -size.height * .8,
       left: -200,
@@ -131,9 +141,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
           children: [
             // a) header text
             Padding(
-              padding: const EdgeInsets.fromLTRB(
-                24, 32, 24, 0
-              ),
+              padding: const EdgeInsets.fromLTRB(24, 32, 24, 0),
               child: buildInstructions(context, colorScheme),
             ),
 
@@ -142,7 +150,6 @@ class _SwipeScreenState extends State<SwipeScreen> {
 
             // c) buttons row
             buildButtons(colorScheme),
-
           ],
         ),
       ),
@@ -156,11 +163,9 @@ class _SwipeScreenState extends State<SwipeScreen> {
         children: [
           TextSpan(
             text: "Let's Find Your Math Level\n",
-            style: Theme.of(
-              context,
-            ).textTheme.bodyLarge?.copyWith(
-                color: colorScheme.onSecondary,
-                fontWeight: FontWeight.bold
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              color: colorScheme.onSecondary,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ],
@@ -169,7 +174,6 @@ class _SwipeScreenState extends State<SwipeScreen> {
   }
 
   Widget buildLatexCard() {
-    if (cardManager.isLast && cardManager.currentIndex >= cardManager.lengthCard) return SizedBox();
 
     final content = cardManager.currentCard;
 
@@ -183,9 +187,10 @@ class _SwipeScreenState extends State<SwipeScreen> {
             offset: _dragOffset,
             child: Transform.rotate(
               angle: _dragOffset.dx * 0.001,
-              child: cardManager.isFirst
-                  ? TextCard(expressions: [content])
-                  : LatexCard(expressions: [content]),
+              child: //cardManager.isFirst
+                  /*? TextCard(expressions: [content])
+                  :*/
+                  LatexCard(expressions: [content]),
             ),
           ),
         ),
@@ -205,9 +210,9 @@ class _SwipeScreenState extends State<SwipeScreen> {
             children: [
               // Too Hard button
               buildElevatedButton(
-                    () {
+                () {
                   setState(() {
-                    cardManager.refuse();
+                    cardManager.answerNo();
                   });
                 },
                 colorScheme.tertiary,
@@ -218,9 +223,9 @@ class _SwipeScreenState extends State<SwipeScreen> {
 
               // Not sure button
               buildElevatedButton(
-                    () {
+                () {
                   setState(() {
-                    cardManager.dontKnow();
+                    cardManager.answerMaybe();
                   });
                 },
                 colorScheme.secondary,
@@ -231,9 +236,9 @@ class _SwipeScreenState extends State<SwipeScreen> {
 
               // Easy button
               buildElevatedButton(
-                    () {
+                () {
                   setState(() {
-                    cardManager.accept();
+                    cardManager.answerYes();
                   });
                 },
                 colorScheme.primary,
@@ -258,17 +263,14 @@ class _SwipeScreenState extends State<SwipeScreen> {
     String data,
     IconData icon,
   ) {
-
-    final textStyle = Theme.of(context)
-        .textTheme
-        .bodySmall
-        ?.copyWith(color: foregroundColor);
+    final textStyle = Theme.of(
+      context,
+    ).textTheme.bodySmall?.copyWith(color: foregroundColor);
 
     return Expanded(
       child: ElevatedButton.icon(
         icon: Icon(icon),
-        label: Text(data,
-        style: textStyle,),
+        label: Text(data, style: textStyle),
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           elevation: 2,
@@ -298,8 +300,9 @@ class _SwipeScreenState extends State<SwipeScreen> {
         ),
         onPressed: () {
           setState(() {
-            cardManager.previousCard();
-          });},
+            //cardManager.previousCard();
+          });
+        },
         child: Icon(Icons.undo),
       ),
     );

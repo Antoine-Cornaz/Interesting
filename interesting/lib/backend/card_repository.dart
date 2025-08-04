@@ -1,13 +1,15 @@
 final class CardRepository {
-  List<String> get allCards => List.from(_cardsInstruction)
-    ..addAll(_cardsArithmetic)
-    ..addAll(_cardsPreAlgebra)
-    ..addAll(_cardsElementaryAlgebra)
-    ..addAll(_cardsSystemEquation)
-    ..addAll(_cardsIntermediateAlgebra)
-    ..addAll(_cardsPreCalculus)
-    ..addAll(_cardsCalculus)
-    ..addAll(_cardsDifferentialEqu);
+  List<List<String>> get allCards => [
+    //_cardsInstruction,
+    _cardsArithmetic,
+    _cardsPreAlgebra,
+    _cardsElementaryAlgebra,
+    _cardsSystemEquation,
+    _cardsIntermediateAlgebra,
+    _cardsPreCalculus,
+    _cardsCalculus,
+    _cardsDifferentialEqu,
+  ];
 
   final List<String> _cardsInstruction = [
     '''
@@ -18,7 +20,7 @@ Can you solve it?
 Yes -> Swipe Right
 No -> Swipe Left
 Maybe -> Swipe Up
-'''
+''',
   ];
 
   // No changes needed, these are fundamental expressions.
@@ -28,7 +30,7 @@ Maybe -> Swipe Up
     r"5 \times 4 = ?",
     r"\frac{12}{4}=?",
     r"5.2 + 12.5 = ?",
-    r"40\% = ?"
+    r"40\% = ?",
   ];
 
   // No changes needed, these are concise.
@@ -38,7 +40,7 @@ Maybe -> Swipe Up
     r"\frac{3}{4} = ...\%",
     r"|-5|",
     r"\frac{2}{3} + \frac{1}{4}",
-    r"7 = x \cdot 28"
+    r"7 = x \cdot 28",
   ];
 
   // Removed instructional text like "Solve for x:"
@@ -48,7 +50,7 @@ Maybe -> Swipe Up
     r'x(2x+3)',
     r'(x+2)(x-3)',
     r'x^2 - 9 = 0',
-    r'\frac{x}{3} = 5'
+    r'\frac{x}{3} = 5',
   ];
 
   // Using `cases` and `aligned` for clarity in systems of equations.
@@ -106,7 +108,7 @@ Maybe -> Swipe Up
     r"e^{\frac{1}{2} \ln (4x^2)}",
     r"\log_2(x) + \log_2(x-2) = 3",
     r"\frac{x^2-4}{x^2-x-2}",
-    r"|2x - 1| \le 5"
+    r"|2x - 1| \le 5",
   ];
 
   // Rewritten to be more symbolic and less text-based.
@@ -121,7 +123,7 @@ Maybe -> Swipe Up
     (f \circ g)(x) &= ?
     \end{aligned}
   """,
-    r"(x,y) = (-1, \sqrt{3}) \rightarrow (r, \theta)"
+    r"(x,y) = (-1, \sqrt{3}) \rightarrow (r, \theta)",
   ];
 
   // Rewritten to use standard calculus notation.
@@ -135,7 +137,7 @@ Maybe -> Swipe Up
     y &= x^3 \\
     \frac{dy}{dx}\bigg|_{x=2} &= ?
     \end{aligned}
-  """
+  """,
   ];
 
   // These are already in standard notation, no major changes needed.
@@ -149,6 +151,6 @@ Maybe -> Swipe Up
   """,
     r"y' + 2y = 0",
     r"y'' - 3y' + 2y = 0",
-    r"\frac{dy}{dx} = \frac{x^2}{y}"
+    r"\frac{dy}{dx} = \frac{x^2}{y}",
   ];
 }
