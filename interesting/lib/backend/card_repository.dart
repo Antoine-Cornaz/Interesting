@@ -1,6 +1,6 @@
 final class CardRepository {
   List<List<String>> get allCards => [
-    //_cardsInstruction,
+    _cardsInstruction,
     _cardsArithmetic,
     _cardsPreAlgebra,
     _cardsElementaryAlgebra,
@@ -11,19 +11,30 @@ final class CardRepository {
     _cardsDifferentialEqu,
   ];
 
+  List<String> get cardInstruction => _cardsInstruction;
+  List<String> get cardsArithmetic => _cardsArithmetic;
+  List<String> get cardsPreAlgebra => _cardsPreAlgebra;
+  List<String> get cardsElementaryAlgebra => _cardsElementaryAlgebra;
+  List<String> get cardsSystemEquation => _cardsSystemEquation;
+  List<String> get cardsIntermediateAlgebra => _cardsIntermediateAlgebra;
+  List<String> get cardsPreCalculus => _cardsPreCalculus;
+  List<String> get cardsCalculus => _cardsCalculus;
+  List<String> get cardsDifferentialEqu => _cardsDifferentialEqu;
+
+
   final List<String> _cardsInstruction = [
     '''
-Math problem ahead.
-Don't solve it.
+You’ll see a series of math problems. No need to solve them. 
+Just answer: Can you solve this one?
 
-Can you solve it?
-Yes -> Swipe Right
-No -> Swipe Left
-Maybe -> Swipe Up
+Swipe right for Yes, left for No, up for Maybe.
+Ready? Swipe anywhere to start.
+
+Prefer tapping? Use the buttons below.
 ''',
   ];
 
-  // No changes needed, these are fundamental expressions.
+
   final List<String> _cardsArithmetic = [
     r"5+8=?",
     r"12-7=?",
@@ -33,7 +44,7 @@ Maybe -> Swipe Up
     r"40\% = ?",
   ];
 
-  // No changes needed, these are concise.
+
   final List<String> _cardsPreAlgebra = [
     r"3^5",
     r'\sqrt[3]{27}',
@@ -43,7 +54,7 @@ Maybe -> Swipe Up
     r"7 = x \cdot 28",
   ];
 
-  // Removed instructional text like "Solve for x:"
+
   final List<String> _cardsElementaryAlgebra = [
     r'5x+3x = 2x - 7',
     r'x-8 < 2x',
@@ -53,7 +64,7 @@ Maybe -> Swipe Up
     r'\frac{x}{3} = 5',
   ];
 
-  // Using `cases` and `aligned` for clarity in systems of equations.
+
   final List<String> _cardsSystemEquation = [
     r"""\begin{cases}
     3x + 2y = 10 \\
@@ -97,7 +108,7 @@ Maybe -> Swipe Up
   """,
   ];
 
-  // Using `aligned` to present equations in a standard, clean format.
+
   final List<String> _cardsIntermediateAlgebra = [
     r"""\begin{aligned}
     3x^2 + 8x &= 2x - 5 \\
@@ -111,7 +122,7 @@ Maybe -> Swipe Up
     r"|2x - 1| \le 5",
   ];
 
-  // Rewritten to be more symbolic and less text-based.
+
   final List<String> _cardsPreCalculus = [
     r"x^2=1+i",
     r"(\cos(x)+1)^2 + \sin^2(x) = 1.5",
@@ -126,7 +137,7 @@ Maybe -> Swipe Up
     r"(x,y) = (-1, \sqrt{3}) \rightarrow (r, \theta)",
   ];
 
-  // Rewritten to use standard calculus notation.
+
   final List<String> _cardsCalculus = [
     r"\lim_{x\to 0} \frac{\sin(2x)}{x}",
     r"\frac{d}{dx}(\cos(x)) = ?",
@@ -140,7 +151,7 @@ Maybe -> Swipe Up
   """,
   ];
 
-  // These are already in standard notation, no major changes needed.
+
   final List<String> _cardsDifferentialEqu = [
     r"f'(x)=2f''(x)",
     r"\frac{d^2 y}{dx^2} + 5x \left(\frac{dy}{dx}\right)^3 = 3\cos(x)",

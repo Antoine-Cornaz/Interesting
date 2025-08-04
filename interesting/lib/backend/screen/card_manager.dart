@@ -1,20 +1,16 @@
-// lib/card_manager.dart (Corrected)
-
 import 'dart:math';
 import 'package:flutter/material.dart';
-
-// Assuming CardRepository is in another file
 import '../card_repository.dart';
 
-// Add "with ChangeNotifier" to make the class observable
 class CardManager with ChangeNotifier {
   final List<List<String>> _allCards = CardRepository().allCards;
 
+  bool _isInstruction = true;
   bool _isFinished = false;
   int _currentLevel = 0;
   int _questionIndexInLevel = 0;
   int _levelScore = 0;
-  int _max_level_succeed = -1;
+  int _max_level_succeed = 0;
   late int _min_level_failed;
 
   static const int questionsPerLevel = 6;
@@ -26,20 +22,18 @@ class CardManager with ChangeNotifier {
 
   // --- Getters ---
   String get currentCard {
-    if (isFinished) return "Assessment Complete!";
+    if (isFinished) return r"\text{Assessment Complete!}";
     if (_currentLevel >= _allCards.length || _questionIndexInLevel >= _allCards[_currentLevel].length) {
       // This case should ideally not be reached, but it's a safe fallback.
       _finishAssessment();
-      return "Finishing assessment...";
+      return r"\text{Finishing assessment...}";
     }
     return _allCards[_currentLevel][_questionIndexInLevel];
   }
 
-  int get finalLevel => max(0, _max_level_succeed);
+  bool get isInstruction => _isInstruction;
+  int get finalLevel => max(1, _max_level_succeed);
   bool get isFinished => _isFinished;
-  String get progressIndicator => isFinished
-      ? "Finished"
-      : "Question ${_questionIndexInLevel + 1} of $questionsPerLevel (Testing Level $_currentLevel)";
 
   // --- Response Methods ---
   void answerYes() => _processAnswer(isCorrect: true);
@@ -48,6 +42,11 @@ class CardManager with ChangeNotifier {
 
   // --- Core Logic ---
   void _processAnswer({required bool isCorrect}) {
+    if (_isInstruction) {
+      _isInstruction = false;
+      _currentLevel++;
+      return;
+    }
     if (isFinished) return;
 
     if (isCorrect) _levelScore++;
@@ -56,8 +55,9 @@ class CardManager with ChangeNotifier {
     // Check if the level is complete (either by answering all questions or by reaching a definitive result early)
     bool masteryIsCertain = _levelScore >= masteryThreshold;
     bool failureIsCertain = (_questionIndexInLevel - _levelScore) > (questionsPerLevel - masteryThreshold);
+    bool noMoreQuestionLevel = _questionIndexInLevel >= questionsPerLevel;
 
-    if (_questionIndexInLevel >= questionsPerLevel || masteryIsCertain || failureIsCertain) {
+    if (noMoreQuestionLevel || masteryIsCertain || failureIsCertain) {
       _evaluateLevelCompletion();
     }
 
@@ -98,8 +98,9 @@ class CardManager with ChangeNotifier {
   }
 
   void reset() {
+    _isInstruction = true;
     _isFinished = false;
-    _max_level_succeed = -1;
+    _max_level_succeed = 0;
     _min_level_failed = _allCards.length;
     _levelScore = 0;
     _questionIndexInLevel = 0;

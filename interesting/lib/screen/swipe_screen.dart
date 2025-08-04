@@ -11,7 +11,6 @@ import '../my_widget/sub_problem_data.dart';
 
 void main() {
   runApp(
-    // 2. Wrap your app in a ChangeNotifierProvider
     ChangeNotifierProvider(
       create: (context) => CardManager(),
       child: const MyApp(),
@@ -155,7 +154,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
     );
   }
 
-  Positioned buildBottomLine(ColorScheme colorScheme) {
+  Widget buildBottomLine(ColorScheme colorScheme) {
     return Positioned(
       left: 0,
       right: 0,
@@ -217,10 +216,9 @@ class _SwipeScreenState extends State<SwipeScreen> {
             offset: _dragOffset,
             child: Transform.rotate(
               angle: _dragOffset.dx * 0.001,
-              child: //cardManager.isFirst
-                  /*? TextCard(expressions: [content])
-                  :*/
-                  LatexCard(expressions: [content]),
+              child: cardManager.isInstruction
+                  ? TextCard(expressions: [content])
+                  : LatexCard(expressions: [content]),
             ),
           ),
         ),
@@ -281,7 +279,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
         ),
 
         // back icon button
-        buildBackButton(colorScheme),
+        //buildBackButton(colorScheme),
       ],
     );
   }
@@ -315,7 +313,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
     );
   }
 
-  Positioned buildBackButton(ColorScheme colorScheme) {
+  Widget buildBackButton(ColorScheme colorScheme) {
     return Positioned(
       top: 5,
       left: 60,
