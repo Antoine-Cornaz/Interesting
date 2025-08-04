@@ -4,9 +4,19 @@ import 'package:flutter/material.dart';
 import '../../util.dart';
 import '../backend/screen/card_manager.dart';
 import '../my_widget/latex_card.dart';
+import 'package:provider/provider.dart';
+
+import '../my_widget/problem.dart';
+import '../my_widget/sub_problem_data.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    // 2. Wrap your app in a ChangeNotifierProvider
+    ChangeNotifierProvider(
+      create: (context) => CardManager(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -30,7 +40,6 @@ class SwipeScreen extends StatefulWidget {
 }
 
 class _SwipeScreenState extends State<SwipeScreen> {
-  final CardManager cardManager = CardManager();
   Offset _dragOffset = Offset.zero;
 
   void _onPanUpdate(DragUpdateDetails details) {
@@ -40,6 +49,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
   }
 
   void _onPanEnd(DragEndDetails details) {
+    final cardManager = Provider.of<CardManager>(context, listen: false);
     final dx = _dragOffset.dx;
     final dy = _dragOffset.dy;
     bool swiped = false;
@@ -71,15 +81,35 @@ class _SwipeScreenState extends State<SwipeScreen> {
     var colorScheme = Theme.of(context).colorScheme;
     final ellipseColor = colorScheme.surface;
     final ellipseColorInside = colorScheme.secondary;
-    return Scaffold(
-      backgroundColor: colorScheme.primary,
-      body: buildMainBody(
-        size,
-        ellipseColorInside,
-        ellipseColor,
-        colorScheme,
-        context,
-      ),
+
+    return Consumer<CardManager>(
+      builder: (context, cardManager, child) {
+        // Check if the assessment is finished
+        if (cardManager.isFinished) {
+          // Use addPostFrameCallback to navigate after the build is complete
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => Problem(problems: problem1),
+              ),
+            );
+          });
+        }
+
+        // Return the scaffold and the rest of your UI
+        // This part of the UI will be rebuilt when cardManager notifies listeners
+        return Scaffold(
+          backgroundColor: colorScheme.primary,
+          body: buildMainBody(
+            size,
+            ellipseColorInside,
+            ellipseColor,
+            colorScheme,
+            context,
+            cardManager,
+          ),
+        );
+      },
     );
   }
 
@@ -89,6 +119,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
     Color ellipseColorOutside,
     ColorScheme colorScheme,
     BuildContext context,
+    CardManager cardManager,
   ) {
     return Stack(
       children: [
@@ -99,7 +130,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
         buildGiantEllipses(size, ellipseColorInside, scaleFactor: 0.83),
 
         // 3) main content
-        buildMainContent(context, colorScheme),
+        buildMainContent(context, colorScheme, cardManager),
       ],
     );
   }
@@ -133,7 +164,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
     );
   }
 
-  Widget buildMainContent(BuildContext context, ColorScheme colorScheme) {
+  Widget buildMainContent(BuildContext context, ColorScheme colorScheme, CardManager cardManager) {
     return Center(
       child: Container(
         constraints: BoxConstraints(maxWidth: maxWidthCard),
@@ -146,10 +177,10 @@ class _SwipeScreenState extends State<SwipeScreen> {
             ),
 
             // b) the card with LaTeX, now with horizontal padding
-            buildLatexCard(),
+            buildLatexCard(cardManager),
 
             // c) buttons row
-            buildButtons(colorScheme),
+            buildButtons(colorScheme, cardManager),
           ],
         ),
       ),
@@ -173,8 +204,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
     );
   }
 
-  Widget buildLatexCard() {
-
+  Widget buildLatexCard(CardManager cardManager) {
     final content = cardManager.currentCard;
 
     return Expanded(
@@ -198,7 +228,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
     );
   }
 
-  Widget buildButtons(ColorScheme colorScheme) {
+  Widget buildButtons(ColorScheme colorScheme, CardManager cardManager) {
     return Stack(
       clipBehavior: Clip.none,
       children: [
