@@ -27,30 +27,33 @@ jobs:
           channel: 'stable'
           cache: true
 
-      # --- All the following steps now run inside the 'interesting' folder ---
+      # Create an empty .env file to satisfy the asset declaration in pubspec.yaml.
+      # This allows 'flutter test' and 'flutter build' to run without failing.
+      - name: 3. Create .env file
+        run: echo "" > .env
+        working-directory: interesting # Creates the file inside your project folder
 
-      - name: 3. Get dependencies
+      - name: 4. Get dependencies
         run: flutter pub get
         working-directory: interesting
 
-      - name: 4. Check formatting
+      - name: 5. Check formatting
         run: dart format --output=none --set-exit-if-changed .
         working-directory: interesting
 
-      - name: 5. Run tests
+      - name: 6. Run tests
         run: flutter test
         working-directory: interesting
 
-      - name: 6. Build Flutter Web
+      - name: 7. Build Flutter Web
         run: >
           flutter build web --release
           --dart-define=GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
         working-directory: interesting
 
-      - name: 7. Upload Pages artifact
+      - name: 8. Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # The path is relative to the repository root
           path: './interesting/build/web'
 
   deploy_to_pages:
