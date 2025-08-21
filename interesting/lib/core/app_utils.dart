@@ -4,11 +4,19 @@ import 'package:google_fonts/google_fonts.dart';
 import 'app_theme.dart';
 
 TextTheme createTextTheme(
-    BuildContext context, String bodyFontString, String displayFontString) {
+  BuildContext context,
+  String bodyFontString,
+  String displayFontString,
+) {
   TextTheme baseTextTheme = Theme.of(context).textTheme;
-  TextTheme bodyTextTheme = GoogleFonts.getTextTheme(bodyFontString, baseTextTheme);
-  TextTheme displayTextTheme =
-  GoogleFonts.getTextTheme(displayFontString, baseTextTheme);
+  TextTheme bodyTextTheme = GoogleFonts.getTextTheme(
+    bodyFontString,
+    baseTextTheme,
+  );
+  TextTheme displayTextTheme = GoogleFonts.getTextTheme(
+    displayFontString,
+    baseTextTheme,
+  );
   TextTheme textTheme = displayTextTheme.copyWith(
     bodyLarge: bodyTextTheme.bodyLarge,
     bodyMedium: bodyTextTheme.bodyMedium,
@@ -20,11 +28,14 @@ TextTheme createTextTheme(
   return textTheme;
 }
 
-ThemeData getTheme(context){
-  TextTheme textTheme = createTextTheme(context, "Roboto", "Roboto"); // Roboto or to test "Flow Circular"
+ThemeData getTheme(context) {
+  TextTheme textTheme = createTextTheme(
+    context,
+    "Roboto",
+    "Roboto",
+  ); // Roboto or to test "Flow Circular"
   return AppTheme(textTheme).light();
 }
-
 
 const hugeText = """
 

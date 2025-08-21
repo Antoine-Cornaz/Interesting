@@ -115,7 +115,9 @@ class CreateExerciseAiScreen extends StatelessWidget {
         print('Creating exercise for: $exerciseTopic');
         // You might show a loading indicator or navigate to the next screen here
         Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => SolveExerciseScreen(problems: problem1)),
+          MaterialPageRoute(
+            builder: (context) => SolveExerciseScreen(problems: problem1),
+          ),
         );
       },
       style: ElevatedButton.styleFrom(

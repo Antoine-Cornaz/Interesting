@@ -1,12 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:interesting/data/repositories/assessment_repository.dart';
 
-
 void main() {
-
-
   test('check size deck', () {
-
     // Create a card manager and display the instruction
 
     AssessmentRepository ar = AssessmentRepository();
@@ -23,7 +19,5 @@ void main() {
     expect(ar.cardsPreCalculus.length, 6);
     expect(ar.cardsCalculus.length, 6);
     expect(ar.cardsDifferentialEqu.length, 6);
-
   });
-
 }

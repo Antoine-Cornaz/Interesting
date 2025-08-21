@@ -4,20 +4,18 @@ import 'package:interesting/features/assessment/logic/assessment_manager.dart';
 import 'package:interesting/features/assessment/ui/assessment_screen.dart';
 import 'package:provider/provider.dart'; // 2. Import the provider package
 
-
-
 void main() {
   // A helper function to create the widget with all its dependencies
   Widget createSwipeScreen() {
     return ChangeNotifierProvider(
       create: (context) => AssessmentManager(),
-      child: const MaterialApp(
-        home: AssessmentScreen(),
-      ),
+      child: const MaterialApp(home: AssessmentScreen()),
     );
   }
 
-  testWidgets('SwipeScreen has a title, a message and 3 buttons', (tester) async {
+  testWidgets('SwipeScreen has a title, a message and 3 buttons', (
+    tester,
+  ) async {
     // Pump the widget with the provider
     await tester.pumpWidget(createSwipeScreen());
 
@@ -38,7 +36,7 @@ void main() {
   });
 
   testWidgets('Test button yes', (tester) async {
-      await testButton(tester, createSwipeScreen, "Yes");
+    await testButton(tester, createSwipeScreen, "Yes");
   });
 
   testWidgets('Test button no', (tester) async {
@@ -50,21 +48,24 @@ void main() {
   });
 }
 
-Future<void> testButton(WidgetTester tester, Widget Function() createSwipeScreen, String textButton) async {
+Future<void> testButton(
+  WidgetTester tester,
+  Widget Function() createSwipeScreen,
+  String textButton,
+) async {
   await tester.pumpWidget(createSwipeScreen());
   await tester.pumpAndSettle();
-  
+
   final button = find.text(textButton);
-  
+
   var messageFinder = find.text(instructions);
   expect(messageFinder, findsOne);
-  
+
   await tester.tap(button);
-  
+
   // Trigger a frame.
   await tester.pumpAndSettle();
-  
-  
+
   messageFinder = find.text(instructions);
   expect(messageFinder, findsNothing);
 }

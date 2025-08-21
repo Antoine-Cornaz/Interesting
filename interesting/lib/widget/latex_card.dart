@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Taylor series',
       theme: getTheme(context),
-      home:LatexCard(
+      home: LatexCard(
         expressions: [
           r'\displaystyle x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}',
           r'\displaystyle y = mx + b',
@@ -63,23 +63,12 @@ class LatexCard extends StatelessWidget {
         //runAlignment: WrapAlignment.center,
       );
 
-      children.add(
-        Expanded(
-          child: Center(
-            child: longEq,
-          ),
-        ),
-      );
+      children.add(Expanded(child: Center(child: longEq)));
 
       // Insert a divider after every item except the last one
       if (i < expressions.length - 1) {
         children.add(
-          const Divider(
-            thickness: 1,
-            height: 32,
-            indent: 16,
-            endIndent: 16,
-          ),
+          const Divider(thickness: 1, height: 32, indent: 16, endIndent: 16),
         );
       }
     }
@@ -125,21 +114,14 @@ class TextCard extends StatelessWidget {
       // Each expression takes equal space
       children.add(
         Expanded(
-          child: Center(
-            child: Text(expressions[i], style: textStyle,),
-          ),
+          child: Center(child: Text(expressions[i], style: textStyle)),
         ),
       );
 
       // Insert a divider after every item except the last one
       if (i < expressions.length - 1) {
         children.add(
-          const Divider(
-            thickness: 1,
-            height: 32,
-            indent: 16,
-            endIndent: 16,
-          ),
+          const Divider(thickness: 1, height: 32, indent: 16, endIndent: 16),
         );
       }
     }

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 
 import '../../../data/repositories/assessment_repository.dart';
 
-
 class AssessmentManager with ChangeNotifier {
   final List<List<String>> _allCards = AssessmentRepository().allCards;
 
@@ -25,7 +24,8 @@ class AssessmentManager with ChangeNotifier {
   // --- Getters ---
   String get currentCard {
     if (isFinished) return r"\text{Assessment Complete!}";
-    if (_currentLevel >= _allCards.length || _questionIndexInLevel >= _allCards[_currentLevel].length) {
+    if (_currentLevel >= _allCards.length ||
+        _questionIndexInLevel >= _allCards[_currentLevel].length) {
       // This case should ideally not be reached, but it's a safe fallback.
       _finishAssessment();
       return r"\text{Finishing assessment...}";
@@ -56,7 +56,9 @@ class AssessmentManager with ChangeNotifier {
 
     // Check if the level is complete (either by answering all questions or by reaching a definitive result early)
     bool masteryIsCertain = _levelScore >= masteryThreshold;
-    bool failureIsCertain = (_questionIndexInLevel - _levelScore) > (questionsPerLevel - masteryThreshold);
+    bool failureIsCertain =
+        (_questionIndexInLevel - _levelScore) >
+        (questionsPerLevel - masteryThreshold);
     bool noMoreQuestionLevel = _questionIndexInLevel >= questionsPerLevel;
 
     if (noMoreQuestionLevel || masteryIsCertain || failureIsCertain) {
@@ -81,7 +83,9 @@ class AssessmentManager with ChangeNotifier {
       return;
     }
 
-    int nextLevel = _max_level_succeed + ((_min_level_failed - _max_level_succeed) / 2).ceil();
+    int nextLevel =
+        _max_level_succeed +
+        ((_min_level_failed - _max_level_succeed) / 2).ceil();
     _prepareForNextLevel(nextLevel);
   }
 
@@ -92,7 +96,8 @@ class AssessmentManager with ChangeNotifier {
   }
 
   void _finishAssessment() {
-    if (!_isFinished) { // Prevent multiple notifications
+    if (!_isFinished) {
+      // Prevent multiple notifications
       _isFinished = true;
       // Notify listeners that the final state has been reached.
       notifyListeners();

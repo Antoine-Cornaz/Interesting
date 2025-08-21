@@ -36,8 +36,10 @@ class BezierShape {
     scaleX = (maxX - minX) / size.width;
     scaleY = (maxY - minY) / size.height;
 
-    path.moveTo(applyTransformationX(points[points.length-1].getX3()),
-        applyTransformationY(points[points.length-1].getY3()));
+    path.moveTo(
+      applyTransformationX(points[points.length - 1].getX3()),
+      applyTransformationY(points[points.length - 1].getY3()),
+    );
 
     for (var point in points) {
       path.cubicTo(

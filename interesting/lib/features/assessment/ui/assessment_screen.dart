@@ -8,7 +8,6 @@ import '../logic/assessment_manager.dart';
 import '../../../widget/latex_card.dart';
 import 'package:provider/provider.dart';
 
-
 void main() {
   runApp(
     ChangeNotifierProvider(
@@ -163,7 +162,11 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
     );
   }
 
-  Widget buildMainContent(BuildContext context, ColorScheme colorScheme, AssessmentManager cardManager) {
+  Widget buildMainContent(
+    BuildContext context,
+    ColorScheme colorScheme,
+    AssessmentManager cardManager,
+  ) {
     return Center(
       child: Container(
         constraints: BoxConstraints(maxWidth: maxWidthCard),

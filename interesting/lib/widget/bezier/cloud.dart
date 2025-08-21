@@ -44,7 +44,10 @@ class Cloud extends StatelessWidget {
 
     return CustomPaint(
       painter: CurvePainter(true, borderColor, bc),
-      child: CustomPaint(painter: CurvePainter(false, filledColor, bc), child: child),
+      child: CustomPaint(
+        painter: CurvePainter(false, filledColor, bc),
+        child: child,
+      ),
     );
   }
 }

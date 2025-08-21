@@ -8,13 +8,10 @@ import '../../../../widget/answer.dart';
 import '../../../../widget/expandable_draggable_scrollable_container.dart';
 import '../../exercise_generation/ui/create_exercise_screen.dart';
 
-
 const heightWave = 70.0;
+
 class SolveExerciseScreen extends StatefulWidget {
-  const SolveExerciseScreen({
-    super.key,
-    required this.problems,
-  });
+  const SolveExerciseScreen({super.key, required this.problems});
 
   final List<SubProblemData> problems;
 
@@ -32,22 +29,20 @@ class _SolveExerciseScreenState extends State<SolveExerciseScreen> {
       _initForCurrent();
     } else {
       // end of list → back to home
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => CreateExerciseAiScreen()),
-      );
+      Navigator.of(
+        context,
+      ).push(MaterialPageRoute(builder: (context) => CreateExerciseAiScreen()));
     }
   }
 
   void _initForCurrent() {
     final data = widget.problems[_currentIndex];
     final qCount = data.questions?.length ?? 0;
-    final aCount = data.answers?.length   ?? 0;
+    final aCount = data.answers?.length ?? 0;
 
     _slotIds = List<int?>.filled(qCount, null);
-    _bank = List<int>.generate(aCount, (i) => i)
-      ..shuffle();
+    _bank = List<int>.generate(aCount, (i) => i)..shuffle();
   }
-
 
   List<int> _bank = [];
   List<int?> _slotIds = List<int?>.filled(0, null);
@@ -78,7 +73,13 @@ class _SolveExerciseScreenState extends State<SolveExerciseScreen> {
         backgroundColor: colorScheme.surface,
         foregroundColor: colorScheme.onSurface,
         title: Row(
-            children: [/*ElevatedButton(onPressed: _goBack, child: Icon(Icons.arrow_back)),*/ Text('Sub‐problem ${_currentIndex+1}', style: textStyle)]),
+          children: [
+            /*ElevatedButton(onPressed: _goBack, child: Icon(Icons.arrow_back)),*/ Text(
+              'Sub‐problem ${_currentIndex + 1}',
+              style: textStyle,
+            ),
+          ],
+        ),
       ),
 
       body: _buildBody(context),
@@ -97,7 +98,10 @@ class _SolveExerciseScreenState extends State<SolveExerciseScreen> {
               children: [
                 // === MIDDLE AREA ===
                 // Your custom ExpandableDraggableScrollableContainer
-                _buildScroll(colorScheme, widget.problems[_currentIndex].questions),
+                _buildScroll(
+                  colorScheme,
+                  widget.problems[_currentIndex].questions,
+                ),
 
                 // === WAVE SHAPE ===
                 // This sits on top of the bottom‐edge of the middle area
@@ -129,18 +133,17 @@ class _SolveExerciseScreenState extends State<SolveExerciseScreen> {
       alignment: Alignment(0.9, 0.7),
 
       child: ElevatedButton(
-        onPressed: _allCorrect
-            ? _goNext
-            : null, // () {} // null
+        onPressed: _allCorrect ? _goNext : null, // () {} // null
         style: ElevatedButton.styleFrom(
           backgroundColor: bg,
           foregroundColor: fg, // text/icon color
           padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 24),
         ),
 
-        child: Text(_currentIndex < widget.problems.length - 1
-            ? 'Next'
-            : 'Finish', style: buttonTextStyle),
+        child: Text(
+          _currentIndex < widget.problems.length - 1 ? 'Next' : 'Finish',
+          style: buttonTextStyle,
+        ),
       ),
     );
   }
@@ -168,11 +171,14 @@ class _SolveExerciseScreenState extends State<SolveExerciseScreen> {
   Column _buildLeftColumn() {
     return Column(
       children: widget.problems[_currentIndex].instructions != null
-          ? List.generate(widget.problems[_currentIndex].instructions!.length, (i) {
-        return Instructions(
-          instructionText: widget.problems[_currentIndex].instructions![i],
-        );
-      })
+          ? List.generate(widget.problems[_currentIndex].instructions!.length, (
+              i,
+            ) {
+              return Instructions(
+                instructionText:
+                    widget.problems[_currentIndex].instructions![i],
+              );
+            })
           : [],
     );
   }
@@ -183,38 +189,39 @@ class _SolveExerciseScreenState extends State<SolveExerciseScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: questions != null
           ? List.generate(questions.length, (i) {
-        return Question(
-          questionText: questions[i],
-          child: _slotIds[i] != null
-              ? Answer(
-            answerText:
-            widget.problems[_currentIndex].answers![_slotIds[i]!],
-            id: _slotIds[i]!,
-          )
-              : null,
-          onAccept: (id) {
-            setState(() {
-              // 1) if it came from another slot, clear that slot:
-              final origin = _slotIds.indexOf(id);
+              return Question(
+                questionText: questions[i],
+                child: _slotIds[i] != null
+                    ? Answer(
+                        answerText: widget
+                            .problems[_currentIndex]
+                            .answers![_slotIds[i]!],
+                        id: _slotIds[i]!,
+                      )
+                    : null,
+                onAccept: (id) {
+                  setState(() {
+                    // 1) if it came from another slot, clear that slot:
+                    final origin = _slotIds.indexOf(id);
 
-              if (origin != -1) {
-                _slotIds[origin] = null;
-              } else {
-                // 2) otherwise it was in the bank:
-                _bank.remove(id);
-              }
+                    if (origin != -1) {
+                      _slotIds[origin] = null;
+                    } else {
+                      // 2) otherwise it was in the bank:
+                      _bank.remove(id);
+                    }
 
-              // 3) if this slot already had an answer, return it to bank:
-              if (_slotIds[i] != null) {
-                _bank.add(_slotIds[i]!);
-              }
+                    // 3) if this slot already had an answer, return it to bank:
+                    if (_slotIds[i] != null) {
+                      _bank.add(_slotIds[i]!);
+                    }
 
-              // 4) finally assign the new text here:
-              _slotIds[i] = id;
-            });
-          },
-        );
-      })
+                    // 4) finally assign the new text here:
+                    _slotIds[i] = id;
+                  });
+                },
+              );
+            })
           : [],
     );
   }
@@ -238,14 +245,15 @@ class _SolveExerciseScreenState extends State<SolveExerciseScreen> {
           children: widget.problems[_currentIndex].answers == null
               ? []
               : _bank.map((answerData) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Answer(
-                answerText: widget.problems[_currentIndex].answers![answerData],
-                id: answerData,
-              ),
-            );
-          }).toList(),
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Answer(
+                      answerText:
+                          widget.problems[_currentIndex].answers![answerData],
+                      id: answerData,
+                    ),
+                  );
+                }).toList(),
         ),
       ),
     );

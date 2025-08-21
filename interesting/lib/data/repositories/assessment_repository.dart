@@ -21,7 +21,6 @@ final class AssessmentRepository {
   List<String> get cardsCalculus => _cardsCalculus;
   List<String> get cardsDifferentialEqu => _cardsDifferentialEqu;
 
-
   final List<String> _cardsInstruction = [
     '''
 You’ll see a series of math problems. No need to solve them. 
@@ -34,7 +33,6 @@ Prefer tapping? Use the buttons below.
 ''',
   ];
 
-
   final List<String> _cardsArithmetic = [
     r"5+8=?",
     r"12-7=?",
@@ -43,7 +41,6 @@ Prefer tapping? Use the buttons below.
     r"5.2 + 12.5 = ?",
     r"40\% = ?",
   ];
-
 
   final List<String> _cardsPreAlgebra = [
     r"3^5",
@@ -54,7 +51,6 @@ Prefer tapping? Use the buttons below.
     r"7 = x \cdot 28",
   ];
 
-
   final List<String> _cardsElementaryAlgebra = [
     r'5x+3x = 2x - 7',
     r'x-8 < 2x',
@@ -63,7 +59,6 @@ Prefer tapping? Use the buttons below.
     r'x^2 - 9 = 0',
     r'\frac{x}{3} = 5',
   ];
-
 
   final List<String> _cardsSystemEquation = [
     r"""\begin{cases}
@@ -108,7 +103,6 @@ Prefer tapping? Use the buttons below.
   """,
   ];
 
-
   final List<String> _cardsIntermediateAlgebra = [
     r"""\begin{aligned}
     3x^2 + 8x &= 2x - 5 \\
@@ -121,7 +115,6 @@ Prefer tapping? Use the buttons below.
     r"\frac{x^2-4}{x^2-x-2}",
     r"|2x - 1| \le 5",
   ];
-
 
   final List<String> _cardsPreCalculus = [
     r"x^2=1+i",
@@ -137,7 +130,6 @@ Prefer tapping? Use the buttons below.
     r"(x,y) = (-1, \sqrt{3}) \rightarrow (r, \theta)",
   ];
 
-
   final List<String> _cardsCalculus = [
     r"\lim_{x\to 0} \frac{\sin(2x)}{x}",
     r"\frac{d}{dx}(\cos(x)) = ?",
@@ -150,7 +142,6 @@ Prefer tapping? Use the buttons below.
     \end{aligned}
   """,
   ];
-
 
   final List<String> _cardsDifferentialEqu = [
     r"f'(x)=2f''(x)",

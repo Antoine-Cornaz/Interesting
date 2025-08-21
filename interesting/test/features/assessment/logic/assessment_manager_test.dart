@@ -2,13 +2,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:interesting/data/repositories/assessment_repository.dart';
 import 'package:interesting/features/assessment/logic/assessment_manager.dart';
 
-
-
 void main() {
   group("Testing multiple answer", () {
-
     test('basic know nothing', () {
-
       // Create a card manager and display the instruction
       AssessmentManager am = AssessmentManager();
 
@@ -39,7 +35,6 @@ void main() {
     });
 
     test('basic know everything', () {
-
       // Create a card manager and display the instruction
       AssessmentManager am = AssessmentManager();
 
@@ -58,8 +53,11 @@ void main() {
           //print("i $i, j $j, ${cardManager.currentCard}");
           expect(am.isInstruction, false);
           expect(am.isFinished, false);
-          expect(am.currentCard, ar.allCards[j][i],
-              reason: "question $i of level $j");
+          expect(
+            am.currentCard,
+            ar.allCards[j][i],
+            reason: "question $i of level $j",
+          );
 
           am.answerYes();
         }
@@ -71,7 +69,6 @@ void main() {
     });
 
     test('basic know 5 of 6', () {
-
       // Create a card manager and display the instruction
       AssessmentManager am = AssessmentManager();
 
@@ -90,12 +87,15 @@ void main() {
           //print("i $i, j $j, ${cardManager.currentCard}");
           expect(am.isInstruction, false);
           expect(am.isFinished, false);
-          expect(am.currentCard, ar.allCards[j][i],
-              reason: "question $i of level $j");
+          expect(
+            am.currentCard,
+            ar.allCards[j][i],
+            reason: "question $i of level $j",
+          );
 
-          if (i == 2){
+          if (i == 2) {
             am.answerNo();
-          }else{
+          } else {
             am.answerYes();
           }
         }
@@ -107,7 +107,6 @@ void main() {
     });
 
     test("basic know 4 of 6, don't know the last 2", () {
-
       /*
       The test succeed level 1 and then fail all other levels.
        */
@@ -126,17 +125,20 @@ void main() {
       List levels = [1, 5, 3, 2];
 
       for (int j in levels) {
-        int iMax = j==1 ? 5 : 6;
+        int iMax = j == 1 ? 5 : 6;
         for (int i = 0; i < iMax; i++) {
           //print("i $i, j $j, ${am.currentCard}");
           expect(am.isInstruction, false);
           expect(am.isFinished, false);
-          expect(am.currentCard, ar.allCards[j][i],
-              reason: "question $i of level $j");
+          expect(
+            am.currentCard,
+            ar.allCards[j][i],
+            reason: "question $i of level $j",
+          );
 
-          if (i >= 4 && j != 1){
+          if (i >= 4 && j != 1) {
             am.answerNo();
-          }else{
+          } else {
             am.answerYes();
           }
         }
@@ -148,7 +150,6 @@ void main() {
     });
 
     test("basic know 4 of 6, don't know the last 2", () {
-
       /*
       The test succeed level 1 and then fail all other levels.
       Same as previous one but with maybe instead of no
@@ -168,17 +169,20 @@ void main() {
       List levels = [1, 5, 3, 2];
 
       for (int j in levels) {
-        int iMax = j==1 ? 5 : 6;
+        int iMax = j == 1 ? 5 : 6;
         for (int i = 0; i < iMax; i++) {
           //print("i $i, j $j, ${am.currentCard}");
           expect(am.isInstruction, false);
           expect(am.isFinished, false);
-          expect(am.currentCard, ar.allCards[j][i],
-              reason: "question $i of level $j");
+          expect(
+            am.currentCard,
+            ar.allCards[j][i],
+            reason: "question $i of level $j",
+          );
 
-          if (i >= 4 && j != 1){
+          if (i >= 4 && j != 1) {
             am.answerMaybe();
-          }else{
+          } else {
             am.answerYes();
           }
         }

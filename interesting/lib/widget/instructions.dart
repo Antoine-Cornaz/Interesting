@@ -29,8 +29,8 @@ class Instructions extends StatelessWidget {
     return Cloud(
       child: Container(
         alignment: Alignment(0, 0),
-        width: 600/1.5,
-        height: 356/1.5,
+        width: 600 / 1.5,
+        height: 356 / 1.5,
         padding: EdgeInsets.all(20),
         child: Text(instructionText, style: textStyle),
       ),

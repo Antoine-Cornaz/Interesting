@@ -1,11 +1,13 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-
 class ExpandableDraggableScrollableContainer extends StatelessWidget {
   final Widget child;
 
-  const ExpandableDraggableScrollableContainer({required this.child, super.key});
+  const ExpandableDraggableScrollableContainer({
+    required this.child,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +29,10 @@ class ExpandableDraggableScrollableContainer extends StatelessWidget {
 class HorizontalExpandableDraggableScrollableContainer extends StatelessWidget {
   final Widget child;
 
-  const HorizontalExpandableDraggableScrollableContainer({required this.child, super.key});
+  const HorizontalExpandableDraggableScrollableContainer({
+    required this.child,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +41,7 @@ class HorizontalExpandableDraggableScrollableContainer extends StatelessWidget {
         behavior: _DragScrollBehavior(),
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
-            child: child
+          child: child,
         ),
       ),
     );
@@ -46,7 +51,10 @@ class HorizontalExpandableDraggableScrollableContainer extends StatelessWidget {
 class VerticalExpandableDraggableScrollableContainer extends StatelessWidget {
   final Widget child;
 
-  const VerticalExpandableDraggableScrollableContainer({required this.child, super.key});
+  const VerticalExpandableDraggableScrollableContainer({
+    required this.child,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -54,8 +62,8 @@ class VerticalExpandableDraggableScrollableContainer extends StatelessWidget {
       child: ScrollConfiguration(
         behavior: _DragScrollBehavior(),
         child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: child
+          scrollDirection: Axis.vertical,
+          child: child,
         ),
       ),
     );
@@ -71,4 +79,3 @@ class _DragScrollBehavior extends ScrollBehavior {
     PointerDeviceKind.unknown,
   };
 }
-
