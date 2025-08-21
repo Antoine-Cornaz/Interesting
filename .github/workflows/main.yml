@@ -47,7 +47,7 @@ jobs:
 
       - name: 7. Build Flutter Web
         run: >
-          flutter build web --release
+          flutter build web --release --base-href /Interesting/
           --dart-define=GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
         working-directory: interesting
 
