@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:interesting/backend/screen/card_manager.dart';
-import 'package:interesting/screen/swipe_screen.dart';
+import 'package:interesting/features/assessment/logic/assessment_manager.dart';
+import 'package:interesting/features/assessment/ui/assessment_screen.dart';
 import 'package:provider/provider.dart'; // 2. Import the provider package
 
 
@@ -10,9 +10,9 @@ void main() {
   // A helper function to create the widget with all its dependencies
   Widget createSwipeScreen() {
     return ChangeNotifierProvider(
-      create: (context) => CardManager(),
+      create: (context) => AssessmentManager(),
       child: const MaterialApp(
-        home: SwipeScreen(),
+        home: AssessmentScreen(),
       ),
     );
   }

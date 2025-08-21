@@ -1,4 +1,4 @@
-final class CardRepository {
+final class AssessmentRepository {
   List<List<String>> get allCards => [
     _cardsInstruction,
     _cardsArithmetic,

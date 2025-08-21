@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:interesting/my_widget/answer.dart';
-import 'package:interesting/theme.dart';
+import 'package:interesting/widget/answer.dart';
+import 'package:interesting/core/app_theme.dart';
 
 // Example of question and question-answer.
 var exampleQuestions = Column(
@@ -17,7 +17,7 @@ var exampleQuestions = Column(
 void main() => runApp(
   MaterialApp(
     home: exampleQuestions,
-    theme: MyMaterialTheme(ThemeData.light().textTheme).light(),
+    theme: AppTheme(ThemeData.light().textTheme).light(),
   ),
 );
 

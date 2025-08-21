@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../theme.dart';
+import '../../core/app_theme.dart';
 import 'curvePainter.dart';
 import 'myBezier.dart';
 

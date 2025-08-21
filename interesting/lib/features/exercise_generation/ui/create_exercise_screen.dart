@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../util.dart';
+import '../../../core/app_utils.dart';
 
-import '../my_widget/problem.dart';
-import '../my_widget/sub_problem_data.dart';
+import '../../../widget/problem.dart';
+import '../../../data/models/sub_problem_data.dart';
 
 void main() {
   runApp(const MyApp());

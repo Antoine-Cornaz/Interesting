@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import '../../theme.dart';
+import '../../core/app_theme.dart';
 import 'curvePainter.dart';
 import 'myBezier.dart';
 
 void main() => runApp(
   MaterialApp(
     home: Cloud(),
-    theme: MyMaterialTheme(ThemeData.light().textTheme).light(),
+    theme: AppTheme(ThemeData.light().textTheme).light(),
   ),
 );
 

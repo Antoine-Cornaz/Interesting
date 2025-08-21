@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'theme.dart';
+import 'app_theme.dart';
 
 TextTheme createTextTheme(
     BuildContext context, String bodyFontString, String displayFontString) {
@@ -22,7 +22,7 @@ TextTheme createTextTheme(
 
 ThemeData getTheme(context){
   TextTheme textTheme = createTextTheme(context, "Roboto", "Roboto"); // Roboto or to test "Flow Circular"
-  return MyMaterialTheme(textTheme).light();
+  return AppTheme(textTheme).light();
 }
 
 

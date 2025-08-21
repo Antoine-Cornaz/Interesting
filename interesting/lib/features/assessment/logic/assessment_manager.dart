@@ -1,9 +1,11 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import '../../data/card_repository.dart';
 
-class CardManager with ChangeNotifier {
-  final List<List<String>> _allCards = CardRepository().allCards;
+import '../../../data/repositories/assessment_repository.dart';
+
+
+class AssessmentManager with ChangeNotifier {
+  final List<List<String>> _allCards = AssessmentRepository().allCards;
 
   bool _isInstruction = true;
   bool _isFinished = false;
@@ -16,7 +18,7 @@ class CardManager with ChangeNotifier {
   static const int questionsPerLevel = 6;
   static const int masteryThreshold = 5;
 
-  CardManager() {
+  AssessmentManager() {
     reset();
   }
 

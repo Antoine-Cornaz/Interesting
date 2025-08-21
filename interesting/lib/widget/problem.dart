@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:interesting/my_widget/instructions.dart';
-import 'package:interesting/my_widget/question.dart';
-import 'package:interesting/my_widget/sub_problem_data.dart';
-import '../screen/create_exercise_ai_screen.dart';
-import '../theme.dart';
+import 'package:interesting/widget/instructions.dart';
+import 'package:interesting/widget/question.dart';
+import 'package:interesting/data/models/sub_problem_data.dart';
+import '../features/exercise_generation/ui/create_exercise_screen.dart';
+import '../core/app_theme.dart';
 import 'bezier/Wave.dart';
 import 'answer.dart';
 import 'expandable_draggable_scrollable_container.dart';

@@ -1,19 +1,19 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import '../../util.dart';
-import '../backend/screen/card_manager.dart';
-import '../my_widget/latex_card.dart';
+import '../../../core/app_utils.dart';
+import '../logic/assessment_manager.dart';
+import '../../../widget/latex_card.dart';
 import 'package:provider/provider.dart';
 
-import '../my_widget/problem.dart';
-import '../my_widget/sub_problem_data.dart';
-import 'create_exercise_ai_screen.dart';
+import '../../../widget/problem.dart';
+import '../../../data/models/sub_problem_data.dart';
+import '../../exercise_generation/ui/create_exercise_screen.dart';
 
 void main() {
   runApp(
     ChangeNotifierProvider(
-      create: (context) => CardManager(),
+      create: (context) => AssessmentManager(),
       child: const MyApp(),
     ),
   );
@@ -27,19 +27,19 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Swipe Screen',
       theme: getTheme(context),
-      home: SwipeScreen(),
+      home: AssessmentScreen(),
     );
   }
 }
 
-class SwipeScreen extends StatefulWidget {
-  const SwipeScreen({super.key});
+class AssessmentScreen extends StatefulWidget {
+  const AssessmentScreen({super.key});
 
   @override
-  _SwipeScreenState createState() => _SwipeScreenState();
+  _AssessmentScreenState createState() => _AssessmentScreenState();
 }
 
-class _SwipeScreenState extends State<SwipeScreen> {
+class _AssessmentScreenState extends State<AssessmentScreen> {
   Offset _dragOffset = Offset.zero;
 
   void _onPanUpdate(DragUpdateDetails details) {
@@ -49,7 +49,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
   }
 
   void _onPanEnd(DragEndDetails details) {
-    final cardManager = Provider.of<CardManager>(context, listen: false);
+    final cardManager = Provider.of<AssessmentManager>(context, listen: false);
     final dx = _dragOffset.dx;
     final dy = _dragOffset.dy;
     bool swiped = false;
@@ -82,7 +82,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
     final ellipseColor = colorScheme.surface;
     final ellipseColorInside = colorScheme.secondary;
 
-    return Consumer<CardManager>(
+    return Consumer<AssessmentManager>(
       builder: (context, cardManager, child) {
         // Check if the assessment is finished
         if (cardManager.isFinished) {
@@ -119,7 +119,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
     Color ellipseColorOutside,
     ColorScheme colorScheme,
     BuildContext context,
-    CardManager cardManager,
+    AssessmentManager cardManager,
   ) {
     return Stack(
       children: [
@@ -164,7 +164,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
     );
   }
 
-  Widget buildMainContent(BuildContext context, ColorScheme colorScheme, CardManager cardManager) {
+  Widget buildMainContent(BuildContext context, ColorScheme colorScheme, AssessmentManager cardManager) {
     return Center(
       child: Container(
         constraints: BoxConstraints(maxWidth: maxWidthCard),
@@ -204,7 +204,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
     );
   }
 
-  Widget buildLatexCard(CardManager cardManager) {
+  Widget buildLatexCard(AssessmentManager cardManager) {
     final content = cardManager.currentCard;
 
     return Expanded(
@@ -227,7 +227,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
     );
   }
 
-  Widget buildButtons(ColorScheme colorScheme, CardManager cardManager) {
+  Widget buildButtons(ColorScheme colorScheme, AssessmentManager cardManager) {
     return Stack(
       clipBehavior: Clip.none,
       children: [

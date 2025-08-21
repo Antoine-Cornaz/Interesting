@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:interesting/theme.dart';
+import 'package:interesting/core/app_theme.dart';
 
 void main() => runApp(
   MaterialApp(
     home: SmallInstruction(instructionText: "a1 + 2 a2x"),
-    theme: MyMaterialTheme(ThemeData.light().textTheme).light(),
+    theme: AppTheme(ThemeData.light().textTheme).light(),
   ),
 );
 
