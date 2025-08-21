@@ -67,6 +67,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4 # This action handles the deployment
-
-
-        # A test comment just to trigger the gh workflow
