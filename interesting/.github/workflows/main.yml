@@ -1,63 +1,69 @@
 # .github/workflows/main.yml
 
-# Name of your workflow. This will be displayed on the "Actions" tab of your GitHub repository.
-name: Dart CI
+# Name of your workflow
+name: Dart CI & Deploy to Pages
 
-# Controls when the workflow will run.
+# Controls when the workflow will run
 on:
-  # Triggers the workflow on push events but only for the "main" branch.
   push:
     branches: [ "main" ]
-  # Triggers the workflow on pull request events targeted at the "main" branch.
   pull_request:
     branches: [ "main" ]
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel.
-jobs:
-  # This job is named "validate" and will handle all our quality checks.
-  validate:
-    # The type of runner that the job will run on. "ubuntu-latest" is a standard choice.
-    runs-on: ubuntu-latest
+# Add this permissions block. It's required for the deployment action to work.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
-    # A sequence of tasks that will be executed as part of the job.
+jobs:
+  # Job 1: Build and Test the application
+  build_and_test:
+    name: Build & Test
+    runs-on: ubuntu-latest
     steps:
-      # Step 1: Checks out your repository under $GITHUB_WORKSPACE, so your job can access it.
       - name: 1. Checkout repository
         uses: actions/checkout@v4
 
-      # Step 2: Sets up the Flutter environment for use in the workflow.
       - name: 2. Set up Flutter SDK
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable' # Use the stable channel of Flutter.
-          cache: true       # Enable caching for faster builds.
+          channel: 'stable'
+          cache: true
 
-      # Step 3: Gets all the project dependencies.
       - name: 3. Get dependencies
         run: flutter pub get
 
-      # Step 4: Check if the code is correctly formatted.
-      # The command will exit with an error code if any files need formatting, failing the workflow.
       - name: 4. Check formatting
         run: dart format --output=none --set-exit-if-changed .
 
-      # Step 5: Run all unit and widget tests.
-      # The workflow will fail if any of your tests fail.
       - name: 5. Run tests
         run: flutter test
 
-      # Step 6: Build the Android App Bundle (AAB).
-      # This step only runs if the previous steps (format, test) have succeeded.
-      # It securely injects the API key from GitHub Secrets into the build.
-      - name: 6. Build release AAB
+      # --- New Step: Build the Web App ---
+      # Securely injects the API key for the web build
+      - name: 6. Build Flutter Web
         run: >
-          flutter build appbundle
+          flutter build web --release
           --dart-define=GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
 
-      # Step 7 (Optional but Recommended): Upload the build artifact.
-      # This saves the generated AAB file so you can download it from the GitHub Actions run.
-      - name: 7. Upload build artifact
-        uses: actions/upload-artifact@v4
+      # --- New Step: Upload the Web build artifact for the deployment job ---
+      - name: 7. Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          name: release-aab # The name of the artifact.
-          path: build/app/outputs/bundle/release/app-release.aab # The path to the file to upload.
+          # The path to the built web app
+          path: './build/web'
+
+  # Job 2: Deploy the Web build to GitHub Pages
+  deploy_to_pages:
+    name: Deploy to Pages
+    # This job requires the 'build_and_test' job to succeed first
+    needs: build_and_test
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }} # The URL of the deployed page
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4 # This action handles the deployment
