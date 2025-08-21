@@ -3,8 +3,11 @@ import 'package:interesting/features/assessment/ui/assessment_screen.dart';
 import 'package:provider/provider.dart';
 import 'core/app_utils.dart';
 import 'features/assessment/logic/assessment_manager.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+Future<void> main() async {
+  // Load the key inside .env file
+  await dotenv.load(fileName: ".env");
   runApp(
     // 2. Wrap your app in a ChangeNotifierProvider
     ChangeNotifierProvider(
