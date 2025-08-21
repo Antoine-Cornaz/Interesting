@@ -6,7 +6,7 @@ import 'features/assessment/logic/assessment_manager.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
-  // Load the key inside .env file
+  // Load the key from .env file
   await dotenv.load(fileName: ".env");
   runApp(
     // 2. Wrap your app in a ChangeNotifierProvider
