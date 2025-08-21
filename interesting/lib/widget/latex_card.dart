@@ -57,8 +57,8 @@ class LatexCard extends StatelessWidget {
       );
       final breakResult = longEq.texBreak();
       final widget = Wrap(
-        children: breakResult.parts,
         crossAxisAlignment: WrapCrossAlignment.center,
+        children: breakResult.parts,
         //alignment: WrapAlignment.center,
         //runAlignment: WrapAlignment.center,
       );

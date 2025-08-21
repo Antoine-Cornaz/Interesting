@@ -19,7 +19,7 @@ class SmallInstruction extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var colorScheme = Theme.of(context).colorScheme;
-    var colorText = colorScheme.onBackground;
+    var colorText = colorScheme.onSurface;
 
     final textStyle = Theme.of(
       context,
