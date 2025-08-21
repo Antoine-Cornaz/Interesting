@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:interesting/backend/screen/card_manager.dart';
 import 'package:interesting/screen/swipe_screen.dart';
-import 'package:interesting/backend/card_repository.dart';
+import 'package:interesting/data/card_repository.dart';
 
 
 void main() {

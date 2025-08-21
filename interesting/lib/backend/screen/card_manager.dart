@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import '../card_repository.dart';
+import '../../data/card_repository.dart';
 
 class CardManager with ChangeNotifier {
   final List<List<String>> _allCards = CardRepository().allCards;

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:interesting/my_widget/instructions.dart';
 import 'package:interesting/my_widget/question.dart';
 import 'package:interesting/my_widget/sub_problem_data.dart';
+import '../screen/create_exercise_ai_screen.dart';
 import '../theme.dart';
 import 'bezier/Wave.dart';
 import 'answer.dart';
@@ -31,7 +32,9 @@ class _ProblemState extends State<Problem> {
       _initForCurrent();
     } else {
       // end of list → back to home
-      Navigator.pop(context);
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => CreateExerciseAiScreen()),
+      );
     }
   }
 

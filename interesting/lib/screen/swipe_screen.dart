@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 
 import '../my_widget/problem.dart';
 import '../my_widget/sub_problem_data.dart';
+import 'create_exercise_ai_screen.dart';
 
 void main() {
   runApp(
@@ -89,7 +90,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(
-                builder: (context) => Problem(problems: problem1),
+                builder: (context) => CreateExerciseAiScreen(),
               ),
             );
           });
@@ -192,7 +193,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
       TextSpan(
         children: [
           TextSpan(
-            text: "Let's Find Your Math Level\n",
+            text: "Let's Find Your Math Level",
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
               color: colorScheme.onSecondary,
               fontWeight: FontWeight.bold,
