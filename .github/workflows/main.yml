@@ -27,29 +27,31 @@ jobs:
           channel: 'stable'
           cache: true
 
+      # --- All the following steps now run inside the 'interesting' folder ---
+
       - name: 3. Get dependencies
         run: flutter pub get
-        working-directory: Interesting
+        working-directory: interesting
 
       - name: 4. Check formatting
         run: dart format --output=none --set-exit-if-changed .
-        working-directory: Interesting
+        working-directory: interesting
 
       - name: 5. Run tests
         run: flutter test
-        working-directory: Interesting
+        working-directory: interesting
 
       - name: 6. Build Flutter Web
         run: >
           flutter build web --release
           --dart-define=GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
-        working-directory: Interesting
+        working-directory: interesting
 
       - name: 7. Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # IMPORTANT: The path is now relative to the root
-          path: './Interesting/build/web'
+          # The path is relative to the repository root
+          path: './interesting/build/web'
 
   deploy_to_pages:
     name: Deploy to Pages
