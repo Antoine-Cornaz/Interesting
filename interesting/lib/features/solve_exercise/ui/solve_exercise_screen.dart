@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:interesting/widget/instructions.dart';
 import 'package:interesting/widget/question.dart';
 import 'package:interesting/data/models/sub_problem_data.dart';
-import '../features/exercise_generation/ui/create_exercise_screen.dart';
-import '../core/app_theme.dart';
-import 'bezier/Wave.dart';
-import 'answer.dart';
-import 'expandable_draggable_scrollable_container.dart';
+import '../../../../core/app_theme.dart';
+import '../../../../widget/bezier/Wave.dart';
+import '../../../../widget/answer.dart';
+import '../../../../widget/expandable_draggable_scrollable_container.dart';
+import '../../exercise_generation/ui/create_exercise_screen.dart';
 
 
 const heightWave = 70.0;
-class Problem extends StatefulWidget {
-  const Problem({
+class SolveExerciseScreen extends StatefulWidget {
+  const SolveExerciseScreen({
     super.key,
     required this.problems,
   });
@@ -19,10 +19,10 @@ class Problem extends StatefulWidget {
   final List<SubProblemData> problems;
 
   @override
-  State<Problem> createState() => _ProblemState();
+  State<SolveExerciseScreen> createState() => _SolveExerciseScreenState();
 }
 
-class _ProblemState extends State<Problem> {
+class _SolveExerciseScreenState extends State<SolveExerciseScreen> {
   // one slot per question in your right column:
   int _currentIndex = 0;
 

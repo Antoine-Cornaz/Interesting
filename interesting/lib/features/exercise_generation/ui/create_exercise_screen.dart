@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../core/app_utils.dart';
 
-import '../../../widget/problem.dart';
 import '../../../data/models/sub_problem_data.dart';
+import '../../solve_exercise/ui/solve_exercise_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -115,7 +115,7 @@ class CreateExerciseAiScreen extends StatelessWidget {
         print('Creating exercise for: $exerciseTopic');
         // You might show a loading indicator or navigate to the next screen here
         Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => Problem(problems: problem1)),
+          MaterialPageRoute(builder: (context) => SolveExerciseScreen(problems: problem1)),
         );
       },
       style: ElevatedButton.styleFrom(

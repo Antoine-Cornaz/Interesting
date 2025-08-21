@@ -2,13 +2,12 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import '../../../core/app_utils.dart';
+import '../../../data/models/sub_problem_data.dart';
+import '../../solve_exercise/ui/solve_exercise_screen.dart';
 import '../logic/assessment_manager.dart';
 import '../../../widget/latex_card.dart';
 import 'package:provider/provider.dart';
 
-import '../../../widget/problem.dart';
-import '../../../data/models/sub_problem_data.dart';
-import '../../exercise_generation/ui/create_exercise_screen.dart';
 
 void main() {
   runApp(
@@ -90,7 +89,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(
-                builder: (context) => CreateExerciseAiScreen(),
+                builder: (context) => SolveExerciseScreen(problems: problem1),
               ),
             );
           });
