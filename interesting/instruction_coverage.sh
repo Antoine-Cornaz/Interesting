@@ -1,0 +1,21 @@
+#! /bin/bash
+
+
+#To get the coverage:
+
+echo "1) start all the tests with coverage"
+flutter test --coverage
+
+echo "2) Create the html from the report"
+genhtml coverage/lcov.info -o coverage/html
+
+echo "3) Open the report with firefox from the folder interesting/coverage/html/index.html"
+
+
+#add dependencies coverage:
+#dependencies:
+#  flutter:
+#    sdk: flutter
+#
+#  ...
+#  coverage: ^1.15.0
