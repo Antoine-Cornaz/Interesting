@@ -1,67 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:interesting/data/models/exercise.dart';
 import 'package:interesting/widget/instructions.dart';
 import 'package:interesting/widget/question.dart';
-import 'package:interesting/data/models/sub_problem_data.dart';
+import 'package:provider/provider.dart';
 import '../../../../core/app_theme.dart';
 import '../../../../widget/bezier/Wave.dart';
 import '../../../../widget/answer.dart';
 import '../../../../widget/expandable_draggable_scrollable_container.dart';
-import '../../exercise_generation/ui/create_exercise_screen.dart';
+import '../logic/solve_exercise_viewmodel.dart';
 
 const heightWave = 70.0;
 
-class SolveExerciseScreen extends StatefulWidget {
+class SolveExerciseScreen extends StatelessWidget {
   const SolveExerciseScreen({super.key, required this.problems});
 
-  final List<SubProblemData> problems;
-
-  @override
-  State<SolveExerciseScreen> createState() => _SolveExerciseScreenState();
-}
-
-class _SolveExerciseScreenState extends State<SolveExerciseScreen> {
-  // one slot per question in your right column:
-  int _currentIndex = 0;
-
-  void _goNext() {
-    if (_currentIndex < widget.problems.length - 1) {
-      setState(() => _currentIndex++);
-      _initForCurrent();
-    } else {
-      // end of list → back to home
-      Navigator.of(
-        context,
-      ).push(MaterialPageRoute(builder: (context) => CreateExerciseAiScreen()));
-    }
-  }
-
-  void _initForCurrent() {
-    final data = widget.problems[_currentIndex];
-    final qCount = data.questions?.length ?? 0;
-    final aCount = data.answers?.length ?? 0;
-
-    _slotIds = List<int?>.filled(qCount, null);
-    _bank = List<int>.generate(aCount, (i) => i)..shuffle();
-  }
-
-  List<int> _bank = [];
-  List<int?> _slotIds = List<int?>.filled(0, null);
-
-  @override
-  initState() {
-    super.initState();
-    _initForCurrent();
-  }
-
-  bool get _allCorrect {
-    for (var i = 0; i < _slotIds.length; i++) {
-      if (i != _slotIds[i]) return false;
-    }
-    return true;
-  }
+  final List<Exercise> problems;
 
   @override
   Widget build(BuildContext context) {
+    // ChangeNotifierProvider creates and provides the ViewModel to its children.
+    return ChangeNotifierProvider(
+      create: (_) => SolveExerciseViewModel(problems),
+      child: const _SolveExerciseScreen(),
+    );
+  }
+}
+
+class _SolveExerciseScreen extends StatelessWidget {
+  const _SolveExerciseScreen();
+
+  @override
+  Widget build(BuildContext context) {
+    final viewModel = context.watch<SolveExerciseViewModel>();
     final colorScheme = Theme.of(context).colorScheme;
 
     final textStyle = Theme.of(
@@ -74,19 +44,20 @@ class _SolveExerciseScreenState extends State<SolveExerciseScreen> {
         foregroundColor: colorScheme.onSurface,
         title: Row(
           children: [
-            /*ElevatedButton(onPressed: _goBack, child: Icon(Icons.arrow_back)),*/ Text(
-              'Sub‐problem ${_currentIndex + 1}',
-              style: textStyle,
-            ),
+            Text('Sub‐problem ${viewModel.currentIndex + 1}', style: textStyle),
           ],
         ),
       ),
 
-      body: _buildBody(context),
+      body: _buildBody(context, viewModel, colorScheme),
     );
   }
 
-  Container _buildBody(BuildContext context) {
+  Widget _buildBody(
+    BuildContext context,
+    SolveExerciseViewModel viewModel,
+    ColorScheme colorScheme,
+  ) {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
       color: colorScheme.surfaceContainerLowest,
@@ -96,32 +67,28 @@ class _SolveExerciseScreenState extends State<SolveExerciseScreen> {
           Expanded(
             child: Stack(
               children: [
-                // === MIDDLE AREA ===
-                // Your custom ExpandableDraggableScrollableContainer
-                _buildScroll(
-                  colorScheme,
-                  widget.problems[_currentIndex].questions,
-                ),
+                // Custom ExpandableDraggableScrollableContainer
+                _buildScroll(context, viewModel, colorScheme),
 
-                // === WAVE SHAPE ===
                 // This sits on top of the bottom‐edge of the middle area
                 _buildWave(),
 
-                _buildButtonNext(context),
+                _buildButtonNext(context, viewModel, colorScheme),
               ],
             ),
           ),
 
-          // === FOOTER ===
-          // Fixed height 100
-          _buildFooter(colorScheme),
+          _buildFooter(viewModel, colorScheme),
         ],
       ),
     );
   }
 
-  Widget _buildButtonNext(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+  Widget _buildButtonNext(
+    BuildContext context,
+    SolveExerciseViewModel viewModel,
+    ColorScheme colorScheme,
+  ) {
     final Color bg = colorScheme.secondary;
     final Color fg = colorScheme.onSecondary;
 
@@ -129,11 +96,21 @@ class _SolveExerciseScreenState extends State<SolveExerciseScreen> {
       context,
     ).textTheme.headlineSmall?.copyWith(color: fg);
 
+    // Determine the button's action based on the state
+    VoidCallback? onPressedAction;
+    if (viewModel.isComplete) {
+      if (viewModel.allCorrect) {
+        onPressedAction = () => viewModel.nextProblem(context);
+      } else {
+        onPressedAction = viewModel.verifyAnswers;
+      }
+    }
+
     return Container(
       alignment: Alignment(0.9, 0.7),
 
       child: ElevatedButton(
-        onPressed: _allCorrect ? _goNext : null, // () {} // null
+        onPressed: onPressedAction,
         style: ElevatedButton.styleFrom(
           backgroundColor: bg,
           foregroundColor: fg, // text/icon color
@@ -141,14 +118,20 @@ class _SolveExerciseScreenState extends State<SolveExerciseScreen> {
         ),
 
         child: Text(
-          _currentIndex < widget.problems.length - 1 ? 'Next' : 'Finish',
+          viewModel.allCorrect
+              ? (viewModel.isLastProblem ? 'Finish' : 'Next')
+              : 'Verify',
           style: buttonTextStyle,
         ),
       ),
     );
   }
 
-  Widget _buildScroll(ColorScheme colorScheme, List<String>? questions) {
+  Widget _buildScroll(
+    BuildContext context,
+    SolveExerciseViewModel viewModel,
+    ColorScheme colorScheme,
+  ) {
     return ExpandableDraggableScrollableContainer(
       child: Container(
         color: colorScheme.surfaceContainerLowest,
@@ -158,71 +141,40 @@ class _SolveExerciseScreenState extends State<SolveExerciseScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Left column
-            _buildLeftColumn(),
+            _buildLeftColumn(viewModel),
 
             // Right column
-            _buildRightColumn(questions),
+            _buildRightColumn(viewModel),
           ],
         ),
       ),
     );
   }
 
-  Column _buildLeftColumn() {
-    return Column(
-      children: widget.problems[_currentIndex].instructions != null
-          ? List.generate(widget.problems[_currentIndex].instructions!.length, (
-              i,
-            ) {
-              return Instructions(
-                instructionText:
-                    widget.problems[_currentIndex].instructions![i],
-              );
-            })
-          : [],
-    );
+  Widget _buildLeftColumn(SolveExerciseViewModel viewModel) {
+    return Instructions(instructionText: viewModel.instructions);
   }
 
-  Column _buildRightColumn(List<String>? questions) {
+  Widget _buildRightColumn(SolveExerciseViewModel viewModel) {
+    final problem = viewModel.currentProblem;
+    final allAnswers = [...problem.answers, ...problem.fakeAnswers];
+
     return Column(
       spacing: 24,
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: questions != null
-          ? List.generate(questions.length, (i) {
-              return Question(
-                questionText: questions[i],
-                child: _slotIds[i] != null
-                    ? Answer(
-                        answerText: widget
-                            .problems[_currentIndex]
-                            .answers![_slotIds[i]!],
-                        id: _slotIds[i]!,
-                      )
-                    : null,
-                onAccept: (id) {
-                  setState(() {
-                    // 1) if it came from another slot, clear that slot:
-                    final origin = _slotIds.indexOf(id);
+      children: List.generate(problem.questions.length, (i) {
+        final answerId = viewModel.slotIds[i];
+        final isCorrect = viewModel.isCorrect[i];
 
-                    if (origin != -1) {
-                      _slotIds[origin] = null;
-                    } else {
-                      // 2) otherwise it was in the bank:
-                      _bank.remove(id);
-                    }
-
-                    // 3) if this slot already had an answer, return it to bank:
-                    if (_slotIds[i] != null) {
-                      _bank.add(_slotIds[i]!);
-                    }
-
-                    // 4) finally assign the new text here:
-                    _slotIds[i] = id;
-                  });
-                },
-              );
-            })
-          : [],
+        return Question(
+          questionText: problem.questions[i],
+          isCorrect: isCorrect,
+          onAccept: (id) => viewModel.onAnswerAccepted(id, i),
+          child: answerId != null
+              ? Answer(answerText: allAnswers[answerId], id: answerId)
+              : null,
+        );
+      }),
     );
   }
 
@@ -235,25 +187,25 @@ class _SolveExerciseScreenState extends State<SolveExerciseScreen> {
     );
   }
 
-  Widget _buildFooter(ColorScheme colorScheme) {
+  Widget _buildFooter(
+    SolveExerciseViewModel viewModel,
+    ColorScheme colorScheme,
+  ) {
+    final problem = viewModel.currentProblem;
+    final allAnswers = [...problem.answers, ...problem.fakeAnswers];
+
     return Container(
       height: 100,
       color: buildSurfaceVariant(colorScheme),
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: HorizontalExpandableDraggableScrollableContainer(
         child: Row(
-          children: widget.problems[_currentIndex].answers == null
-              ? []
-              : _bank.map((answerData) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Answer(
-                      answerText:
-                          widget.problems[_currentIndex].answers![answerData],
-                      id: answerData,
-                    ),
-                  );
-                }).toList(),
+          children: viewModel.bank.map((answerData) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Answer(answerText: allAnswers[answerData], id: answerData),
+            );
+          }).toList(),
         ),
       ),
     );

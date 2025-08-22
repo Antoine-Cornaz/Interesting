@@ -10,6 +10,7 @@ var exampleQuestions = Column(
     Question(
       questionText: "f'(x) = and you know what a text slowly longer",
       child: Answer(answerText: "A bit bigger answer", id: 0),
+      isCorrect: false,
     ),
   ],
 );
@@ -29,6 +30,7 @@ class Question extends StatelessWidget {
     this.onAccept,
     this.horizontalPadding = 8.0,
     this.verticalPadding = 4.0,
+    this.isCorrect = true,
   });
 
   final String questionText;
@@ -36,10 +38,11 @@ class Question extends StatelessWidget {
   final void Function(int)? onAccept;
   final double horizontalPadding;
   final double verticalPadding;
+  final bool isCorrect;
 
   @override
   Widget build(BuildContext context) {
-    final _ColorsAndStyles styles = _getColorsAndStyles(context);
+    final _ColorsAndStyles styles = _getColorsAndStyles(context, isCorrect);
     return Center(
       child: Card(
         shape: _buildCardShape(styles.borderColor),
@@ -118,11 +121,17 @@ class Question extends StatelessWidget {
     );
   }
 
-  _ColorsAndStyles _getColorsAndStyles(BuildContext context) {
+  _ColorsAndStyles _getColorsAndStyles(BuildContext context, bool isCorrect) {
     final colorScheme = Theme.of(context).colorScheme;
-    final textColor = colorScheme.onPrimaryContainer;
-    final borderColor = colorScheme.outlineVariant;
-    final backgroundColor = colorScheme.primaryContainer;
+    final textColor = isCorrect
+        ? colorScheme.onPrimaryContainer
+        : colorScheme.error;
+    final borderColor = isCorrect
+        ? colorScheme.outlineVariant
+        : colorScheme.onError;
+    final backgroundColor = isCorrect
+        ? colorScheme.primaryContainer
+        : colorScheme.errorContainer;
 
     final questionTextStyle = Theme.of(
       context,

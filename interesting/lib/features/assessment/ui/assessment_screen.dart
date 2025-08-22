@@ -1,34 +1,11 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import '../../../core/app_utils.dart';
 import '../../../data/models/sub_problem_data.dart';
 import '../../solve_exercise/ui/solve_exercise_screen.dart';
 import '../logic/assessment_manager.dart';
 import '../../../widget/latex_card.dart';
 import 'package:provider/provider.dart';
-
-void main() {
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => AssessmentManager(),
-      child: const MyApp(),
-    ),
-  );
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Swipe Screen',
-      theme: getTheme(context),
-      home: AssessmentScreen(),
-    );
-  }
-}
 
 class AssessmentScreen extends StatefulWidget {
   const AssessmentScreen({super.key});
@@ -88,7 +65,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(
-                builder: (context) => SolveExerciseScreen(problems: problem1),
+                builder: (context) => SolveExerciseScreen(problems: exercise1),
               ),
             );
           });
@@ -150,15 +127,6 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
           borderRadius: BorderRadius.circular(size.height),
         ),
       ),
-    );
-  }
-
-  Widget buildBottomLine(ColorScheme colorScheme) {
-    return Positioned(
-      left: 0,
-      right: 0,
-      bottom: 0,
-      child: Container(height: 3.5, color: colorScheme.onPrimaryContainer),
     );
   }
 
@@ -280,9 +248,6 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
             ],
           ),
         ),
-
-        // back icon button
-        //buildBackButton(colorScheme),
       ],
     );
   }
@@ -312,29 +277,6 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
           ),
           padding: EdgeInsets.symmetric(vertical: 20),
         ),
-      ),
-    );
-  }
-
-  Widget buildBackButton(ColorScheme colorScheme) {
-    return Positioned(
-      top: 5,
-      left: 60,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          elevation: 2,
-          shape: CircleBorder(),
-          side: BorderSide(color: colorScheme.outline, width: 1.0),
-          padding: EdgeInsets.all(20.0),
-          backgroundColor: colorScheme.surfaceContainerLow,
-          foregroundColor: colorScheme.onSurfaceVariant, // optional fill
-        ),
-        onPressed: () {
-          setState(() {
-            //cardManager.previousCard();
-          });
-        },
-        child: Icon(Icons.undo),
       ),
     );
   }

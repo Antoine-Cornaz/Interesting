@@ -1,3 +1,5 @@
+import 'package:interesting/data/models/exercise.dart';
+
 const List<String> questions1 = ["3+5=", "5+7=", "5+?=8"];
 
 const List<String> answers1 = ["8", "12", "3", "2", "6", "7", "10"];
@@ -36,6 +38,31 @@ var subProblem3 = SubProblemData(
 );
 
 var problem1 = [subProblem1, subProblem2, subProblem3];
+var subExercise1 = Exercise(
+  nameOfExercise: "arithmetic 1/3",
+  instructions: "Solve the following additions",
+  questions: questions1,
+  solution: "No solution for the moment",
+  answers: answers1.sublist(0, 3),
+  fakeAnswers: answers1.sublist(3),
+);
+var subExercise2 = Exercise(
+  nameOfExercise: "arithmetic 2/3",
+  instructions: "Solve the following additions",
+  questions: questions2,
+  solution: "No solution for the moment",
+  answers: answers2.sublist(0, 4),
+  fakeAnswers: answers2.sublist(4),
+);
+var subExercise3 = Exercise(
+  nameOfExercise: "arithmetic 3/3",
+  instructions: "Solve the following additions and substraction",
+  questions: questions3,
+  solution: "No solution for the moment",
+  answers: answers3.sublist(0, 4),
+  fakeAnswers: answers3.sublist(4),
+);
+var exercise1 = [subExercise1, subExercise2, subExercise3];
 
 class SubProblemData {
   final List<String>? answers;
