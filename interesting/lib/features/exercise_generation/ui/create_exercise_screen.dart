@@ -90,7 +90,7 @@ class CreateExerciseAiScreen extends StatelessWidget {
     TextEditingController textController,
     BuildContext context,
   ) {
-    final gemini = GeminiService();
+    final gemini = GeminiService.instance();
     return ElevatedButton(
       onPressed: () async {
         final String exerciseTopic = textController.text;
@@ -106,7 +106,6 @@ class CreateExerciseAiScreen extends StatelessWidget {
   - fake_answers: A list of incorrect answers that are plausible.
   ''';
 
-        print('final prompt: $prompt');
         try {
           final problem = await gemini.generateExercises(prompt);
           // You might show a loading indicator or navigate to the next screen here

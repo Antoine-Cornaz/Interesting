@@ -45,6 +45,8 @@ app.*.map.json
 /android/app/release
 /lib/test.dart
 /key.txt
-/lib/data/services/gemini_service.dart
 /coverage/
 /.env
+
+# For mockito, recreate the mock files
+**/*.mocks.dart
