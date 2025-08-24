@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:interesting/features/assessment/ui/assessment_screen.dart';
 import 'package:provider/provider.dart';
 import 'core/app_utils.dart';
 import 'features/assessment/logic/assessment_manager.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'features/assessment/ui/assessment_screen.dart';
 
 Future<void> main() async {
   // Load the key from .env file

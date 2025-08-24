@@ -1,25 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../core/app_utils.dart';
 
-import '../../../data/models/sub_problem_data.dart';
+import '../../../data/services/gemini_service.dart';
 import '../../solve_exercise/ui/solve_exercise_screen.dart';
-
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Swipe Screen',
-      theme: getTheme(context),
-      home: CreateExerciseAiScreen(),
-    );
-  }
-}
 
 class CreateExerciseAiScreen extends StatelessWidget {
   const CreateExerciseAiScreen({super.key});
@@ -108,17 +90,34 @@ class CreateExerciseAiScreen extends StatelessWidget {
     TextEditingController textController,
     BuildContext context,
   ) {
+    final gemini = GeminiService();
     return ElevatedButton(
-      onPressed: () {
-        // TODO: Implement the logic to create the exercise
+      onPressed: () async {
         final String exerciseTopic = textController.text;
-        print('Creating exercise for: $exerciseTopic');
-        // You might show a loading indicator or navigate to the next screen here
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => SolveExerciseScreen(problems: exercise1),
-          ),
-        );
+
+        final prompt =
+            '''  Generate a list of 2 questions by 2 exercises so 4 questions in total about the following theme: {$exerciseTopic}.
+  For each exercise, provide:
+  - name_of_exercise: A short title for the exercise.
+  - instructions: How to complete the exercise.
+  - questions: The questions to be asked.
+  - solution: The steps to solve all the question in one string.
+  - answers: A list of correct answers in the same order as the questions.
+  - fake_answers: A list of incorrect answers that are plausible.
+  ''';
+
+        print('final prompt: $prompt');
+        try {
+          final problem = await gemini.generateExercises(prompt);
+          // You might show a loading indicator or navigate to the next screen here
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => SolveExerciseScreen(problems: problem),
+            ),
+          );
+        } catch (err) {
+          print('Caught error: $err');
+        }
       },
       style: ElevatedButton.styleFrom(
         // A strong background color to make it stand out

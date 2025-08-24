@@ -37,7 +37,7 @@ var subProblem3 = SubProblemData(
   instructions: instructions3,
 );
 
-var problem1 = [subProblem1, subProblem2, subProblem3];
+var problem1 = [subProblem1 /*, subProblem2, subProblem3*/];
 var subExercise1 = Exercise(
   nameOfExercise: "arithmetic 1/3",
   instructions: "Solve the following additions",
@@ -62,7 +62,7 @@ var subExercise3 = Exercise(
   answers: answers3.sublist(0, 4),
   fakeAnswers: answers3.sublist(4),
 );
-var exercise1 = [subExercise1, subExercise2, subExercise3];
+var exercise1 = [subExercise1 /*, subExercise2, subExercise3*/];
 
 class SubProblemData {
   final List<String>? answers;

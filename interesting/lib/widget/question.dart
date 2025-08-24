@@ -9,8 +9,8 @@ var exampleQuestions = Column(
 
     Question(
       questionText: "f'(x) = and you know what a text slowly longer",
-      child: Answer(answerText: "A bit bigger answer", id: 0),
       isCorrect: false,
+      child: Answer(answerText: "A bit bigger answer", id: 0),
     ),
   ],
 );
