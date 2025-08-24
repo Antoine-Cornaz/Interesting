@@ -102,27 +102,23 @@ void main() {
       },
     );
 
-    test(
-      'throws an Exception when the API response is null',
-          () async {
-        // ARRANGE
-        final mockModel = MockGenerativeModelInterface();
-        // --- Use the mock for your new interface ---
-        final mockResponse = MockGenerateContentResponseInterface();
+    test('throws an Exception when the API response is null', () async {
+      // ARRANGE
+      final mockModel = MockGenerativeModelInterface();
+      // --- Use the mock for your new interface ---
+      final mockResponse = MockGenerateContentResponseInterface();
 
-        
-        when(mockResponse.text).thenReturn(null);
+      when(mockResponse.text).thenReturn(null);
 
-        when(
-          mockModel.generateContent(any),
-        ).thenAnswer((_) async => mockResponse);
+      when(
+        mockModel.generateContent(any),
+      ).thenAnswer((_) async => mockResponse);
 
-        final geminiService = GeminiService(mockModel);
+      final geminiService = GeminiService(mockModel);
 
-        // ACT & ASSERT
-        final futureCall = geminiService.generateExercises('any prompt');
-        expect(futureCall, throwsA(isA<Exception>()));
-      },
-    );
+      // ACT & ASSERT
+      final futureCall = geminiService.generateExercises('any prompt');
+      expect(futureCall, throwsA(isA<Exception>()));
+    });
   });
 }

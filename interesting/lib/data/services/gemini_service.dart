@@ -12,7 +12,7 @@ class GeminiService {
   static final String _apiKey = _apiKeyFromEnv.isNotEmpty
       ? _apiKeyFromEnv
       : _apiKeyFromDotEnv;
-  static const String _modelName = 'gemini-1.5-flash';
+  static const String _modelName = 'gemini-2.5-flash';
 
   // --- MODIFICATION 1: Depend on the INTERFACE, not the concrete class ---
   final GenerativeModelInterface _model;
