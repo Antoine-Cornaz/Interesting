@@ -43,7 +43,7 @@ jobs:
 
       - name: 6. Generate mock files
         run: dart run build_runner build --delete-conflicting-outputs
-        working-directory: Interesting
+        working-directory: interesting
 
       - name: 7. Run tests
         run: flutter test
